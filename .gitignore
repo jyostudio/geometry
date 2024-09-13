@@ -2,3 +2,5 @@ node_modules
 test
 coverage
 test-report.html
+index.html
+index.js

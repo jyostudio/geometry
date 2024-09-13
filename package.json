@@ -1,6 +1,6 @@
 {
   "name": "@jyostudio/geometry",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "geometry",
   "source": "src/index.js",
   "main": "src/index.js",

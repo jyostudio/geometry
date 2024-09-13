@@ -1,6 +1,6 @@
-# @jyostudio/list
+# @jyostudio/geometry
 
-强类型对象列表。
+几何运算类集合。
 
 ## 引用
 
@@ -10,7 +10,7 @@
 <script type="importmap">
   {
     imports: {
-      "@jyostudio/list": "https://unpkg.com/@jyostudio/list"
+      "@jyostudio/list": "https://unpkg.com/@jyostudio/geometry"
     }
   }
 </script>
@@ -19,43 +19,12 @@
 Node.js
 
 ```bash
-npm install @jyostudio/list
+npm install @jyostudio/geometry
 ```
 
-根据环境引用后，用法完全一致，不需要在使用时区分引用地址和方式。
+根据环境引用后，用法完全一致，不需要在使用时区分引用地址和方式。  
 
-## 用法
-
-下列代码演示了如何创建列表。
-
-```javascript
-import List from "@jyostudio/list";
-
-let list = new List(Number, [1, 2, 3, 4]);
-new List(String);
-new List(Boolean, [true, false, true, true]);
-new List(Number, list);
-```
-
-下面代码演示了如何搭配 overload 使用。
-
-```javascript
-import overload from "@jyostudio/overload";
-import List from "@jyostudio/list";
-
-const fn = overload()
-  .add([List.T(Number)], function (list) {
-    console.log("只允许数字类型的列表：", list);
-  })
-  .add([List.T(String)], function (list) {
-    console.log("只允许字符串类型的列表：", list);
-  });
-
-fn(new List(String));
-fn(new List(Number));
-```
-
-更多用法请参考智能提示。
+具体用法请参照智能提示。
 
 ## 许可证
 
