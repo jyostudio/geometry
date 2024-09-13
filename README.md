@@ -10,7 +10,7 @@
 <script type="importmap">
   {
     imports: {
-      "@jyostudio/list": "https://unpkg.com/@jyostudio/geometry"
+      "@jyostudio/geometry": "https://unpkg.com/@jyostudio/geometry"
     }
   }
 </script>
