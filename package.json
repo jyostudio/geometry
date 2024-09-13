@@ -1,6 +1,6 @@
 {
   "name": "@jyostudio/geometry",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "geometry",
   "source": "src/index.js",
   "main": "src/index.js",
@@ -28,16 +28,14 @@
   },
   "homepage": "https://github.com/jyostudio/geometry#readme",
   "devDependencies": {
-    "@jyostudio/list": "^0.0.3",
     "esbuild": "^0.23.0",
     "jest": "^29.7.0",
     "jest-html-reporter": "^3.10.2"
   },
   "peerDependencies": {
+    "@jyostudio/enum": "^0.0.3",
+    "@jyostudio/list": "^0.0.3",
     "@jyostudio/overload": "^0.0.9"
-  },
-  "dependencies": {
-    "@jyostudio/enum": "^0.0.3"
   },
   "jest": {
     "transform": {},
