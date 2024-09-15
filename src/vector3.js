@@ -58,6 +58,10 @@ export default class Vector3 {
 
     #z = 0;
 
+    static ["##STRUCT_CONSTURCTOR##"]() {
+        return Vector3.zero;
+    }
+
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Vector3[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {

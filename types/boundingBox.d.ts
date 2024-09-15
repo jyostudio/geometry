@@ -9,6 +9,7 @@ import List from "@jyostudio/list";
 
 /**
  * 定义通过轴对齐的盒形 3D 物体。
+ * @struct
  */
 export default class BoundingBox {
     /**

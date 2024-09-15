@@ -4,7 +4,7 @@ import Plane from "./plane";
 
 /**
  * 定义一个矩阵。
- * @class
+ * @struct
  */
 export default class Matrix {
   /**

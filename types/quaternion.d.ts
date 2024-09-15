@@ -3,6 +3,7 @@ import Matrix from "./matrix";
 
 /**
  * 定义一个四维矢量 (x,y,z,w)，它可用于有效地将某个对象围绕 (x, y, z) 矢量旋转 angle theta，其中 w = cos(theta/2)。
+ * @struct
  */
 export default class Quaternion {
   /**

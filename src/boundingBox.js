@@ -27,6 +27,10 @@ export default class BoundingBox {
 
     #min = null;
 
+    static ["##STRUCT_CONSTURCTOR##"]() {
+        return new BoundingBox();
+    }
+
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         BoundingBox[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {

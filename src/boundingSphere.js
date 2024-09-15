@@ -16,6 +16,10 @@ export default class BoundingSphere {
 
     #radius = 0;
 
+    static ["##STRUCT_CONSTURCTOR##"]() {
+        return new BoundingSphere();
+    }
+
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         BoundingSphere[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {

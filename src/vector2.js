@@ -28,6 +28,10 @@ export default class Vector2 {
 
     #y = 0;
 
+    static ["##STRUCT_CONSTURCTOR##"]() {
+        return Vector2.zero;
+    }
+
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Vector2[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {

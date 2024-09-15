@@ -6,6 +6,7 @@ import BoundingSphere from "./boundingSphere";
 
 /**
  * 定义一条射线。
+ * @struct
  */
 export default class Ray {
   /**

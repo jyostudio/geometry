@@ -41,6 +41,10 @@ export default class Rectangle {
         return this.#y;
     }
 
+    static ["##STRUCT_CONSTURCTOR##"]() {
+        return Rectangle.empty;
+    }
+
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Rectangle[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {

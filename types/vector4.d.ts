@@ -6,6 +6,7 @@ import Quaternion from "./quaternion";
 
 /**
  * 定义具有四个组件的矢量。
+ * @struct
  */
 export default class Vector4 {
   /**

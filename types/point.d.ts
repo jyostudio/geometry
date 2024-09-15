@@ -1,5 +1,6 @@
 /**
  * 定义 2D 空间中的点。
+ * @struct
  */
 export default class Point {
   /**

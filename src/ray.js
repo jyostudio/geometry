@@ -12,6 +12,10 @@ export default class Ray {
 
     #position = null;
 
+    static ["##STRUCT_CONSTURCTOR##"]() {
+        return new Ray();
+    }
+
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Ray[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {

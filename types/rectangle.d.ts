@@ -2,6 +2,7 @@ import Point from "./point";
 
 /**
  * 定义一个矩形。
+ * @struct
  */
 export default class Rectangle {
   /**

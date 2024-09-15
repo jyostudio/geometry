@@ -15,6 +15,10 @@ export default class Plane {
 
     #d = 0;
 
+    static ["##STRUCT_CONSTURCTOR##"]() {
+        return new Plane();
+    }
+
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Plane[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {

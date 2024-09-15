@@ -17,6 +17,10 @@ export default class Quaternion {
 
     #w = 0;
 
+    static ["##STRUCT_CONSTURCTOR##"]() {
+        return new Quaternion();
+    }
+
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Quaternion[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {

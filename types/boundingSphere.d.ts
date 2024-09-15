@@ -10,6 +10,7 @@ import PlaneIntersectionType from "./planeIntersectionType";
 
 /**
  * 定义一个球体。
+ * @struct
  */
 export default class BoundingSphere {
   /**

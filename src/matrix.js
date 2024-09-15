@@ -48,6 +48,10 @@ export default class Matrix {
 
     #m44 = 0;
 
+    static ["##STRUCT_CONSTURCTOR##"]() {
+        return new Matrix();
+    }
+
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Matrix[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {

@@ -11,6 +11,10 @@ export default class Point {
 
     #y = 0;
 
+    static ["##STRUCT_CONSTURCTOR##"]() {
+        return Point.zero;
+    }
+
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Point[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {

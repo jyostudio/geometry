@@ -9,6 +9,7 @@ import PlaneIntersectionType from "./planeIntersectionType";
 
 /**
  * 定义一个平面。
+ * @struct
  */
 export default class Plane {
   /**
