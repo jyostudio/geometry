@@ -1,6 +1,6 @@
 {
   "name": "@jyostudio/geometry",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "geometry",
   "source": "src/index.js",
   "main": "src/index.js",
@@ -34,8 +34,8 @@
   },
   "peerDependencies": {
     "@jyostudio/enum": "^0.0.3",
-    "@jyostudio/list": "^0.0.5",
-    "@jyostudio/overload": "^0.0.10"
+    "@jyostudio/list": "^0.0.6",
+    "@jyostudio/overload": "^0.0.11"
   },
   "jest": {
     "transform": {},
