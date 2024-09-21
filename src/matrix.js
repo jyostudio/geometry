@@ -54,26 +54,12 @@ export default class Matrix {
 
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Matrix[CONSTURCTOR_SYMBOL] = overload()
-            .add([], function () {
-                return Matrix[CONSTURCTOR_SYMBOL].call(this,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0,
-                    0, 0, 0, 0
-                );
-            })
+            .add([], function () { })
             .add([Number, Number, Number, Number, Number, Number, Number, Number, Number, Number, Number, Number, Number, Number, Number, Number], function (m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44) {
-                [
-                    this.m11, this.m12, this.m13, this.m14,
-                    this.m21, this.m22, this.m23, this.m24,
-                    this.m31, this.m32, this.m33, this.m34,
-                    this.m41, this.m42, this.m43, this.m44
-                ] = [
-                        m11, m12, m13, m14,
-                        m21, m22, m23, m24,
-                        m31, m32, m33, m34,
-                        m41, m42, m43, m44
-                    ];
+                this.#m11 = m11, this.#m12 = m12, this.#m13 = m13, this.#m14 = m14;
+                this.#m21 = m21, this.#m22 = m22, this.#m23 = m23, this.#m24 = m24;
+                this.#m31 = m31, this.#m32 = m32, this.#m33 = m33, this.#m34 = m34;
+                this.#m41 = m41, this.#m42 = m42, this.#m43 = m43, this.#m44 = m44;
             });
 
         return Matrix[CONSTURCTOR_SYMBOL].apply(this, params);
@@ -146,59 +132,59 @@ export default class Matrix {
                 set: overload([Number], value => this.#m44 = value)
             },
             backward: {
-                get: () => new Vector3(this.m31, this.m32, this.m33),
+                get: () => new Vector3(this.#m31, this.#m32, this.#m33),
                 set: overload([Vector3], function (value) {
-                    this.m31 = value.x;
-                    this.m32 = value.y;
-                    this.m33 = value.z;
+                    this.#m31 = value.x;
+                    this.#m32 = value.y;
+                    this.#m33 = value.z;
                 })
             },
             down: {
-                get: () => new Vector3(-this.m21, -this.m22, -this.m23),
+                get: () => new Vector3(-this.#m21, -this.#m22, -this.#m23),
                 set: overload([Vector3], function (value) {
-                    this.m21 = -value.x;
-                    this.m22 = -value.y;
-                    this.m23 = -value.z;
+                    this.#m21 = -value.x;
+                    this.#m22 = -value.y;
+                    this.#m23 = -value.z;
                 })
             },
             forward: {
-                get: () => new Vector3(-this.m31, -this.m32, -this.m33),
+                get: () => new Vector3(-this.#m31, -this.#m32, -this.#m33),
                 set: overload([Vector3], function (value) {
-                    this.m31 = -value.x;
-                    this.m32 = -value.y;
-                    this.m33 = -value.z;
+                    this.#m31 = -value.x;
+                    this.#m32 = -value.y;
+                    this.#m33 = -value.z;
                 })
             },
             left: {
-                get: () => new Vector3(-this.m11, -this.m12, -this.m13),
+                get: () => new Vector3(-this.#m11, -this.#m12, -this.#m13),
                 set: overload([Vector3], function (value) {
-                    this.m11 = -value.x;
-                    this.m12 = -value.y;
-                    this.m13 = -value.z;
+                    this.#m11 = -value.x;
+                    this.#m12 = -value.y;
+                    this.#m13 = -value.z;
                 })
             },
             right: {
-                get: () => new Vector3(this.m11, this.m12, this.m13),
+                get: () => new Vector3(this.#m11, this.#m12, this.#m13),
                 set: overload([Vector3], function (value) {
-                    this.m11 = value.x;
-                    this.m12 = value.y;
-                    this.m13 = value.z;
+                    this.#m11 = value.x;
+                    this.#m12 = value.y;
+                    this.#m13 = value.z;
                 })
             },
             translation: {
-                get: () => new Vector3(this.m41, this.m42, this.m43),
+                get: () => new Vector3(this.#m41, this.#m42, this.#m43),
                 set: overload([Vector3], function (value) {
-                    this.m41 = value.x;
-                    this.m42 = value.y;
-                    this.m43 = value.z;
+                    this.#m41 = value.x;
+                    this.#m42 = value.y;
+                    this.#m43 = value.z;
                 })
             },
             up: {
-                get: () => new Vector3(this.m21, this.m22, this.m23),
+                get: () => new Vector3(this.#m21, this.#m22, this.#m23),
                 set: overload([Vector3], function (value) {
-                    this.m21 = value.x;
-                    this.m22 = value.y;
-                    this.m23 = value.z;
+                    this.#m21 = value.x;
+                    this.#m22 = value.y;
+                    this.#m23 = value.z;
                 })
             }
         });
@@ -208,10 +194,10 @@ export default class Matrix {
 
     *[Symbol.iterator]() {
         const elements = [
-            this.m11, this.m12, this.m13, this.m14,
-            this.m21, this.m22, this.m23, this.m24,
-            this.m31, this.m32, this.m33, this.m34,
-            this.m41, this.m42, this.m43, this.m44
+            this.#m11, this.#m12, this.#m13, this.#m14,
+            this.#m21, this.#m22, this.#m23, this.#m24,
+            this.#m31, this.#m32, this.#m33, this.#m34,
+            this.#m41, this.#m42, this.#m43, this.#m44
         ];
         for (const element of elements) {
             yield element;
@@ -220,10 +206,12 @@ export default class Matrix {
 
     static add(...params) {
         Matrix.add = overload([Matrix, Matrix], function (matrix1, matrix2) {
-            const elements1 = [...matrix1];
-            const elements2 = [...matrix2];
-            const resultElements = elements1.map((value, index) => value + elements2[index]);
-            return new Matrix(...resultElements);
+            return new Matrix(
+                matrix1.#m11 + matrix2.#m11, matrix1.#m12 + matrix2.#m12, matrix1.#m13 + matrix2.#m13, matrix1.#m14 + matrix2.#m14,
+                matrix1.#m21 + matrix2.#m21, matrix1.#m22 + matrix2.#m22, matrix1.#m23 + matrix2.#m23, matrix1.#m24 + matrix2.#m24,
+                matrix1.#m31 + matrix2.#m31, matrix1.#m32 + matrix2.#m32, matrix1.#m33 + matrix2.#m33, matrix1.#m34 + matrix2.#m34,
+                matrix1.#m41 + matrix2.#m41, matrix1.#m42 + matrix2.#m42, matrix1.#m43 + matrix2.#m43, matrix1.#m44 + matrix2.#m44
+            );
         });
 
         return Matrix.add.apply(this, params);
@@ -231,14 +219,13 @@ export default class Matrix {
 
     static createBillboard(...params) {
         Matrix.createBillboard = overload([Vector3, Vector3, Vector3, [Vector3, null]], function (objectPosition, cameraPosition, cameraUpVector, cameraForwardVector) {
-            const { x: ox, y: oy, z: oz } = objectPosition;
+            const ox = objectPosition.x, oy = objectPosition.y, oz = objectPosition.z;
+
             let vector = new Vector3(
                 ox - cameraPosition.x,
                 oy - cameraPosition.y,
                 oz - cameraPosition.z
             );
-            let vector2 = new Vector3();
-            let vector3 = new Vector3();
             const num = vector.lengthSquared();
 
             if (num < 0.0001) {
@@ -253,13 +240,13 @@ export default class Matrix {
                 vector.normalize();
             }
 
-            vector3 = Vector3.cross(cameraUpVector, vector);
-            vector3.normalize();
-            vector2 = Vector3.cross(vector, vector3);
+            const vector2 = Vector3.cross(cameraUpVector, vector);
+            vector2.normalize();
+            const vector3 = Vector3.cross(vector, vector2);
 
             return new Matrix(
-                vector3.x, vector3.y, vector3.z, 0,
                 vector2.x, vector2.y, vector2.z, 0,
+                vector3.x, vector3.y, vector3.z, 0,
                 vector.x, vector.y, vector.z, 0,
                 ox, oy, oz, 1
             );
@@ -270,15 +257,16 @@ export default class Matrix {
 
     static createConstrainedBillboard(...params) {
         Matrix.createConstrainedBillboard = overload([Vector3, Vector3, Vector3, [Vector3, null], [Vector3, null]], function (objectPosition, cameraPosition, rotateAxis, cameraForwardVector, objectForwardVector) {
-            const { x: ox, y: oy, z: oz } = objectPosition;
+            const ox = objectPosition.x, oy = objectPosition.y, oz = objectPosition.z;
+
             let num;
-            let vector = new Vector3();
+            let vector;
             let vector2 = new Vector3(
                 ox - cameraPosition.x,
                 oy - cameraPosition.y,
                 oz - cameraPosition.z
             );
-            let vector3 = new Vector3();
+            let vector3;
 
             let num2 = vector2.lengthSquared();
             if (num2 < 0.0001) {
@@ -293,11 +281,11 @@ export default class Matrix {
                 vector2 = Vector3.multiply(vector2, (1 / (Math.sqrt(num2))));
             }
 
-            let vector4 = rotateAxis;
+            const vector4 = rotateAxis;
             num = Vector3.dot(rotateAxis, vector2);
 
             if (Math.abs(num) > 0.9982547) {
-                let vec3Forward = Vector3.forward;
+                const vec3Forward = Vector3.forward;
                 if (objectForwardVector) {
                     vector = objectForwardVector;
                     num = Vector3.dot(rotateAxis, vector);
@@ -333,20 +321,22 @@ export default class Matrix {
 
     static createFromAxisAngle(...params) {
         Matrix.createFromAxisAngle = overload([Vector3, Number], function (axis, angle) {
-            const { x: axisX, y: axisY, z: axisZ } = axis;
-            const sinAngle = Math.sin(angle);
-            const cosAngle = Math.cos(angle);
-            const axisXSquare = axisX * axisX;
-            const axisYSquare = axisY * axisY;
-            const axisZSquare = axisZ * axisZ;
-            const axisXY = axisX * axisY;
-            const axisXZ = axisX * axisZ;
-            const axisYZ = axisY * axisZ;
+            const axisX = axis.x, axisY = axis.y, axisZ = axis.z;
+            const sinAngle = Math.sin(angle), cosAngle = Math.cos(angle);
+            const axisXSquare = axisX ** 2, axisYSquare = axisY ** 2, axisZSquare = axisZ ** 2;
+            const axisXY = axisX * axisY, axisXZ = axisX * axisZ, axisYZ = axisY * axisZ;
+
+            const a = axisXY - (cosAngle * axisXY);
+            const b = sinAngle * axisZ;
+            const c = axisXZ - (cosAngle * axisXZ);
+            const d = sinAngle * axisY;
+            const e = axisYZ - (cosAngle * axisYZ);
+            const f = sinAngle * axisX;
 
             return new Matrix(
-                axisXSquare + (cosAngle * (1 - axisXSquare)), (axisXY - (cosAngle * axisXY)) + (sinAngle * axisZ), (axisXZ - (cosAngle * axisXZ)) - (sinAngle * axisY), 0,
-                (axisXY - (cosAngle * axisXY)) - (sinAngle * axisZ), axisYSquare + (cosAngle * (1 - axisYSquare)), (axisYZ - (cosAngle * axisYZ)) + (sinAngle * axisX), 0,
-                (axisXZ - (cosAngle * axisXZ)) + (sinAngle * axisY), (axisYZ - (cosAngle * axisYZ)) - (sinAngle * axisX), axisZSquare + (cosAngle * (1 - axisZSquare)), 0,
+                axisXSquare + (cosAngle * (1 - axisXSquare)), a + b, c - d, 0,
+                a - b, axisYSquare + (cosAngle * (1 - axisYSquare)), e + f, 0,
+                c + d, e - f, axisZSquare + (cosAngle * (1 - axisZSquare)), 0,
                 0, 0, 0, 1
             );
         });
@@ -356,8 +346,12 @@ export default class Matrix {
 
     static createFromQuaternion(...params) {
         Matrix.createFromQuaternion = overload([Quaternion], function (quaternion) {
-            const { x, y, z, w } = quaternion;
-            const [xx, yy, zz, xy, xz, yz, wx, wy, wz] = [x * x, y * y, z * z, x * y, x * z, y * z, w * x, w * y, w * z];
+            const x = quaternion.x, y = quaternion.y, z = quaternion.z, w = quaternion.w;
+
+            const xx = x ** 2, yy = y ** 2, zz = z ** 2;
+
+            const xy = x * y, xz = x * z, yz = y * z;
+            const wx = w * x, wy = w * y, wz = w * z;
 
             return new Matrix(
                 1 - 2 * (yy + zz), 2 * (xy + wz), 2 * (xz - wy), 0,
@@ -403,15 +397,15 @@ export default class Matrix {
             const invDepth = 1 / (zNearPlane - zFarPlane);
             const zNearRatio = zNearPlane / (zNearPlane - zFarPlane);
 
-            result.m11 = invWidth;
-            result.m12 = result.m13 = result.m14 = 0;
-            result.m22 = invHeight;
-            result.m21 = result.m23 = result.m24 = 0;
-            result.m33 = invDepth;
-            result.m31 = result.m32 = result.m34 = 0;
-            result.m41 = result.m42 = 0;
-            result.m43 = zNearRatio;
-            result.m44 = 1;
+            result.#m11 = invWidth;
+            result.#m12 = result.#m13 = result.#m14 = 0;
+            result.#m22 = invHeight;
+            result.#m21 = result.#m23 = result.#m24 = 0;
+            result.#m33 = invDepth;
+            result.#m31 = result.#m32 = result.#m34 = 0;
+            result.#m41 = result.#m42 = 0;
+            result.#m43 = zNearRatio;
+            result.#m44 = 1;
 
             return result;
         });
@@ -447,11 +441,11 @@ export default class Matrix {
             }
 
             const result = new Matrix();
-            result.m11 = (2 * nearPlaneDistance) / width;
-            result.m22 = (2 * nearPlaneDistance) / height;
-            result.m33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
-            result.m34 = -1;
-            result.m43 = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
+            result.#m11 = (2 * nearPlaneDistance) / width;
+            result.#m22 = (2 * nearPlaneDistance) / height;
+            result.#m33 = farPlaneDistance / (nearPlaneDistance - farPlaneDistance);
+            result.#m34 = -1;
+            result.#m43 = (nearPlaneDistance * farPlaneDistance) / (nearPlaneDistance - farPlaneDistance);
             return result;
         });
 
@@ -482,11 +476,11 @@ export default class Matrix {
             const num9 = num / aspectRatio;
             const nearFarDiff = nearPlaneDistance - farPlaneDistance;
 
-            result.m11 = num9;
-            result.m22 = num;
-            result.m33 = farPlaneDistance / nearFarDiff;
-            result.m34 = -1;
-            result.m43 = (nearPlaneDistance * farPlaneDistance) / nearFarDiff;
+            result.#m11 = num9;
+            result.#m22 = num;
+            result.#m33 = farPlaneDistance / nearFarDiff;
+            result.#m34 = -1;
+            result.#m43 = (nearPlaneDistance * farPlaneDistance) / nearFarDiff;
 
             return result;
         });
@@ -514,13 +508,13 @@ export default class Matrix {
             const topBottom = top - bottom;
             const nearFar = nearPlaneDistance - farPlaneDistance;
 
-            result.m11 = near2 / rightLeft;
-            result.m22 = near2 / topBottom;
-            result.m31 = (left + right) / rightLeft;
-            result.m32 = (top + bottom) / topBottom;
-            result.m33 = farPlaneDistance / nearFar;
-            result.m34 = -1;
-            result.m43 = (nearPlaneDistance * farPlaneDistance) / nearFar;
+            result.#m11 = near2 / rightLeft;
+            result.#m22 = near2 / topBottom;
+            result.#m31 = (left + right) / rightLeft;
+            result.#m32 = (top + bottom) / topBottom;
+            result.#m33 = farPlaneDistance / nearFar;
+            result.#m34 = -1;
+            result.#m43 = (nearPlaneDistance * farPlaneDistance) / nearFar;
 
             return result;
         });
@@ -531,7 +525,8 @@ export default class Matrix {
     static createReflection(...params) {
         Matrix.createReflection = overload([Plane], function (value) {
             const plane = Plane.normalize(value);
-            const { x, y, z } = plane.normal;
+            const planeNormal = plane.normal;
+            const x = planeNormal.x, y = planeNormal.y, z = planeNormal.z;
             const num3 = -2 * x;
             const num2 = -2 * y;
             const num = -2 * z;
@@ -551,10 +546,10 @@ export default class Matrix {
             const result = this.identity;
             const val1 = Math.cos(radians);
             const val2 = Math.sin(radians);
-            result.m22 = val1;
-            result.m23 = val2;
-            result.m32 = -val2;
-            result.m33 = val1;
+            result.#m22 = val1;
+            result.#m23 = val2;
+            result.#m32 = -val2;
+            result.#m33 = val1;
             return result;
         });
 
@@ -567,10 +562,10 @@ export default class Matrix {
                 const result = this.identity;
                 const val1 = Math.cos(radians);
                 const val2 = Math.sin(radians);
-                result.m11 = val1;
-                result.m13 = -val2;
-                result.m31 = val2;
-                result.m33 = val1;
+                result.#m11 = val1;
+                result.#m13 = -val2;
+                result.#m31 = val2;
+                result.#m33 = val1;
                 return result;
             });
 
@@ -583,10 +578,10 @@ export default class Matrix {
                 const result = this.identity;
                 const val1 = Math.cos(radians);
                 const val2 = Math.sin(radians);
-                result.m11 = val1;
-                result.m12 = val2;
-                result.m21 = -val2;
-                result.m22 = val1;
+                result.#m11 = val1;
+                result.#m12 = val2;
+                result.#m21 = -val2;
+                result.#m22 = val1;
                 return result;
             });
 
@@ -596,18 +591,28 @@ export default class Matrix {
     static createScale(...params) {
         Matrix.createScale = overload()
             .add([Number], function (scale) {
-                return this.createScale(scale, scale, scale);
+                const result = new Matrix();
+                result.#m11 = scale;
+                result.#m22 = scale;
+                result.#m33 = scale;
+                result.#m44 = 1;
+                return result;
             })
             .add([Number, Number, Number], function (xScale, yScale, zScale) {
                 const result = new Matrix();
-                result.m11 = xScale;
-                result.m22 = yScale;
-                result.m33 = zScale;
-                result.m44 = 1;
+                result.#m11 = xScale;
+                result.#m22 = yScale;
+                result.#m33 = zScale;
+                result.#m44 = 1;
                 return result;
             })
             .add([Vector3], function (scales) {
-                return this.createScale(scales.x, scales.y, scales.z);
+                const result = new Matrix();
+                result.#m11 = scales.x;
+                result.#m22 = scales.y;
+                result.#m33 = scales.z;
+                result.#m44 = 1;
+                return result;
             });
 
         return Matrix.createScale.apply(this, params);
@@ -615,30 +620,29 @@ export default class Matrix {
 
     static createShadow(...params) {
         Matrix.createShadow = overload([Vector3, Plane], function (lightDirection, plane) {
-            const { x: ldx, y: ldy, z: ldz } = lightDirection;
-            const dot = Vector3.dot(plane.normal, lightDirection);
-            const x = -plane.normal.x;
-            const y = -plane.normal.y;
-            const z = -plane.normal.z;
+            const ldx = lightDirection.x, ldy = lightDirection.y, ldz = lightDirection.z;
+            const planeNormal = plane.normal;
+            const dot = Vector3.dot(planeNormal, lightDirection);
+            const x = -planeNormal.x, y = -planeNormal.y, z = -planeNormal.z;
             const d = -plane.d;
 
             const result = new Matrix();
-            result.m11 = (x * ldx) + dot;
-            result.m12 = x * ldy;
-            result.m13 = x * ldz;
-            result.m14 = 0;
-            result.m21 = y * ldx;
-            result.m22 = (y * ldy) + dot;
-            result.m23 = y * ldz;
-            result.m24 = 0;
-            result.m31 = z * ldx;
-            result.m32 = z * ldy;
-            result.m33 = (z * ldz) + dot;
-            result.m34 = 0;
-            result.m41 = d * ldx;
-            result.m42 = d * ldy;
-            result.m43 = d * ldz;
-            result.m44 = dot;
+            result.#m11 = (x * ldx) + dot;
+            result.#m12 = x * ldy;
+            result.#m13 = x * ldz;
+            result.#m14 = 0;
+            result.#m21 = y * ldx;
+            result.#m22 = (y * ldy) + dot;
+            result.#m23 = y * ldz;
+            result.#m24 = 0;
+            result.#m31 = z * ldx;
+            result.#m32 = z * ldy;
+            result.#m33 = (z * ldz) + dot;
+            result.#m34 = 0;
+            result.#m41 = d * ldx;
+            result.#m42 = d * ldy;
+            result.#m43 = d * ldz;
+            result.#m44 = dot;
             return result;
         });
 
@@ -649,17 +653,25 @@ export default class Matrix {
         Matrix.createTranslation = overload()
             .add([Number, Number, Number], function (xPosition, yPosition, zPosition) {
                 const result = new Matrix();
-                result.m11 = 1;
-                result.m22 = 1;
-                result.m33 = 1;
-                result.m41 = xPosition;
-                result.m42 = yPosition;
-                result.m43 = zPosition;
-                result.m44 = 1;
+                result.#m11 = 1;
+                result.#m22 = 1;
+                result.#m33 = 1;
+                result.#m41 = xPosition;
+                result.#m42 = yPosition;
+                result.#m43 = zPosition;
+                result.#m44 = 1;
                 return result;
             })
             .add([Vector3], function (position) {
-                return this.createTranslation(position.x, position.y, position.z);
+                const result = new Matrix();
+                result.#m11 = 1;
+                result.#m22 = 1;
+                result.#m33 = 1;
+                result.#m41 = position.x;
+                result.#m42 = position.y;
+                result.#m43 = position.z;
+                result.#m44 = 1;
+                return result;
             });
 
         return Matrix.createTranslation.apply(this, params);
@@ -679,7 +691,7 @@ export default class Matrix {
                 result.up = y;
                 result.forward = z;
                 result.translation = position;
-                result.m44 = 1;
+                result.#m44 = 1;
                 return result;
             });
 
@@ -690,13 +702,20 @@ export default class Matrix {
         Matrix.divide = overload()
             .add([Matrix, Number], function (matrix1, divider) {
                 const num = 1 / divider;
-                const resultElements = [...matrix1].map(value => value * num);
-                return new Matrix(...resultElements);
+                return new Matrix(
+                    matrix1.#m11 * num, matrix1.#m12 * num, matrix1.#m13 * num, matrix1.#m14 * num,
+                    matrix1.#m21 * num, matrix1.#m22 * num, matrix1.#m23 * num, matrix1.#m24 * num,
+                    matrix1.#m31 * num, matrix1.#m32 * num, matrix1.#m33 * num, matrix1.#m34 * num,
+                    matrix1.#m41 * num, matrix1.#m42 * num, matrix1.#m43 * num, matrix1.#m44 * num
+                );
             })
             .add([Matrix, Matrix], function (matrix1, matrix2) {
-                const elements2 = [...matrix2];
-                const resultElements = [...matrix1].map((value, index) => value / elements2[index]);
-                return new Matrix(...resultElements);
+                return new Matrix(
+                    matrix1.#m11 / matrix2.#m11, matrix1.#m12 / matrix2.#m12, matrix1.#m13 / matrix2.#m13, matrix1.#m14 / matrix2.#m14,
+                    matrix1.#m21 / matrix2.#m21, matrix1.#m22 / matrix2.#m22, matrix1.#m23 / matrix2.#m23, matrix1.#m24 / matrix2.#m24,
+                    matrix1.#m31 / matrix2.#m31, matrix1.#m32 / matrix2.#m32, matrix1.#m33 / matrix2.#m33, matrix1.#m34 / matrix2.#m34,
+                    matrix1.#m41 / matrix2.#m41, matrix1.#m42 / matrix2.#m42, matrix1.#m43 / matrix2.#m43, matrix1.#m44 / matrix2.#m44
+                );
             });
 
         return Matrix.divide.apply(this, params);
@@ -704,7 +723,11 @@ export default class Matrix {
 
     static invert(...params) {
         Matrix.invert = overload([Matrix], function (matrix) {
-            const { m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44 } = matrix;
+            const m11 = matrix.#m11, m12 = matrix.#m12, m13 = matrix.#m13, m14 = matrix.#m14;
+            const m21 = matrix.#m21, m22 = matrix.#m22, m23 = matrix.#m23, m24 = matrix.#m24;
+            const m31 = matrix.#m31, m32 = matrix.#m32, m33 = matrix.#m33, m34 = matrix.#m34;
+            const m41 = matrix.#m41, m42 = matrix.#m42, m43 = matrix.#m43, m44 = matrix.#m44;
+
             const result = new Matrix();
 
             const minor33_44 = (m33 * m44 - m34 * m43);
@@ -721,15 +744,15 @@ export default class Matrix {
 
             const determinant = (1.0 / (m11 * cofactor11 + m12 * cofactor12 + m13 * cofactor13 + m14 * cofactor14));
 
-            result.m11 = cofactor11 * determinant;
-            result.m21 = cofactor12 * determinant;
-            result.m31 = cofactor13 * determinant;
-            result.m41 = cofactor14 * determinant;
+            result.#m11 = cofactor11 * determinant;
+            result.#m21 = cofactor12 * determinant;
+            result.#m31 = cofactor13 * determinant;
+            result.#m41 = cofactor14 * determinant;
 
-            result.m12 = -(m12 * minor33_44 - m13 * minor32_44 + m14 * minor32_43) * determinant;
-            result.m22 = (m11 * minor33_44 - m13 * minor31_44 + m14 * minor31_43) * determinant;
-            result.m32 = -(m11 * minor32_44 - m12 * minor31_44 + m14 * minor31_42) * determinant;
-            result.m42 = (m11 * minor32_43 - m12 * minor31_43 + m13 * minor31_42) * determinant;
+            result.#m12 = -(m12 * minor33_44 - m13 * minor32_44 + m14 * minor32_43) * determinant;
+            result.#m22 = (m11 * minor33_44 - m13 * minor31_44 + m14 * minor31_43) * determinant;
+            result.#m32 = -(m11 * minor32_44 - m12 * minor31_44 + m14 * minor31_42) * determinant;
+            result.#m42 = (m11 * minor32_43 - m12 * minor31_43 + m13 * minor31_42) * determinant;
 
             const minor23_44 = (m23 * m44 - m24 * m43);
             const minor22_44 = (m22 * m44 - m24 * m42);
@@ -738,10 +761,10 @@ export default class Matrix {
             const minor21_43 = (m21 * m43 - m23 * m41);
             const minor21_42 = (m21 * m42 - m22 * m41);
 
-            result.m13 = (m12 * minor23_44 - m13 * minor22_44 + m14 * minor22_43) * determinant;
-            result.m23 = -(m11 * minor23_44 - m13 * minor21_44 + m14 * minor21_43) * determinant;
-            result.m33 = (m11 * minor22_44 - m12 * minor21_44 + m14 * minor21_42) * determinant;
-            result.m43 = -(m11 * minor22_43 - m12 * minor21_43 + m13 * minor21_42) * determinant;
+            result.#m13 = (m12 * minor23_44 - m13 * minor22_44 + m14 * minor22_43) * determinant;
+            result.#m23 = -(m11 * minor23_44 - m13 * minor21_44 + m14 * minor21_43) * determinant;
+            result.#m33 = (m11 * minor22_44 - m12 * minor21_44 + m14 * minor21_42) * determinant;
+            result.#m43 = -(m11 * minor22_43 - m12 * minor21_43 + m13 * minor21_42) * determinant;
 
             const minor23_34 = (m23 * m34 - m24 * m33);
             const minor22_34 = (m22 * m34 - m24 * m32);
@@ -750,10 +773,10 @@ export default class Matrix {
             const minor21_33 = (m21 * m33 - m23 * m31);
             const minor21_32 = (m21 * m32 - m22 * m31);
 
-            result.m14 = -(m12 * minor23_34 - m13 * minor22_34 + m14 * minor22_33) * determinant;
-            result.m24 = (m11 * minor23_34 - m13 * minor21_34 + m14 * minor21_33) * determinant;
-            result.m34 = -(m11 * minor22_34 - m12 * minor21_34 + m14 * minor21_32) * determinant;
-            result.m44 = (m11 * minor22_33 - m12 * minor21_33 + m13 * minor21_32) * determinant;
+            result.#m14 = -(m12 * minor23_34 - m13 * minor22_34 + m14 * minor22_33) * determinant;
+            result.#m24 = (m11 * minor23_34 - m13 * minor21_34 + m14 * minor21_33) * determinant;
+            result.#m34 = -(m11 * minor22_34 - m12 * minor21_34 + m14 * minor21_32) * determinant;
+            result.#m44 = (m11 * minor22_33 - m12 * minor21_33 + m13 * minor21_32) * determinant;
 
             return result;
         });
@@ -763,14 +786,12 @@ export default class Matrix {
 
     static lerp(...params) {
         Matrix.lerp = overload([Matrix, Matrix, Number], function (matrix1, matrix2, amount) {
-            const interpolate = (value1, value2, amount) => value1 + ((value2 - value1) * amount);
-            const m1 = [...matrix1];
-            const m2 = [...matrix2];
-            const list = [];
-            for (let i = 0; i < 16; i++) {
-                list.push(interpolate(m1[i], m2[i], amount));
-            }
-            return new Matrix(...list);
+            return new Matrix(
+                matrix1.#m11 + ((matrix2.#m11 - matrix1.#m11) * amount), matrix1.#m12 + ((matrix2.#m12 - matrix1.#m12) * amount), matrix1.#m13 + ((matrix2.#m13 - matrix1.#m13) * amount), matrix1.#m14 + ((matrix2.#m14 - matrix1.#m14) * amount),
+                matrix1.#m21 + ((matrix2.#m21 - matrix1.#m21) * amount), matrix1.#m22 + ((matrix2.#m22 - matrix1.#m22) * amount), matrix1.#m23 + ((matrix2.#m23 - matrix1.#m23) * amount), matrix1.#m24 + ((matrix2.#m24 - matrix1.#m24) * amount),
+                matrix1.#m31 + ((matrix2.#m31 - matrix1.#m31) * amount), matrix1.#m32 + ((matrix2.#m32 - matrix1.#m32) * amount), matrix1.#m33 + ((matrix2.#m33 - matrix1.#m33) * amount), matrix1.#m34 + ((matrix2.#m34 - matrix1.#m34) * amount),
+                matrix1.#m41 + ((matrix2.#m41 - matrix1.#m41) * amount), matrix1.#m42 + ((matrix2.#m42 - matrix1.#m42) * amount), matrix1.#m43 + ((matrix2.#m43 - matrix1.#m43) * amount), matrix1.#m44 + ((matrix2.#m44 - matrix1.#m44) * amount)
+            );
         });
 
         return Matrix.lerp.apply(this, params);
@@ -779,7 +800,12 @@ export default class Matrix {
     static multiply(...params) {
         Matrix.multiply = overload()
             .add([Matrix, Number], function (matrix1, scaleFactor) {
-                return new Matrix(...[...matrix1].map(value => value * scaleFactor));
+                return new Matrix(
+                    matrix1.#m11 * scaleFactor, matrix1.#m12 * scaleFactor, matrix1.#m13 * scaleFactor, matrix1.#m14 * scaleFactor,
+                    matrix1.#m21 * scaleFactor, matrix1.#m22 * scaleFactor, matrix1.#m23 * scaleFactor, matrix1.#m24 * scaleFactor,
+                    matrix1.#m31 * scaleFactor, matrix1.#m32 * scaleFactor, matrix1.#m33 * scaleFactor, matrix1.#m34 * scaleFactor,
+                    matrix1.#m41 * scaleFactor, matrix1.#m42 * scaleFactor, matrix1.#m43 * scaleFactor, matrix1.#m44 * scaleFactor
+                );
             })
             .add([Matrix, Matrix], function (matrix1, matrix2) {
                 const matrix = new Matrix();
@@ -787,18 +813,22 @@ export default class Matrix {
                 return matrix;
             })
             .add([Matrix, Matrix, Matrix], function (matrix1, matrix2, outMatrix) {
-                const getElement = (row, col) =>
-                    matrix1[`m${row}1`] * matrix2[`m1${col}`] +
-                    matrix1[`m${row}2`] * matrix2[`m2${col}`] +
-                    matrix1[`m${row}3`] * matrix2[`m3${col}`] +
-                    matrix1[`m${row}4`] * matrix2[`m4${col}`];
-
-                for (let row = 1; row <= 4; row++) {
-                    for (let col = 1; col <= 4; col++) {
-                        outMatrix[`m${row}${col}`] = getElement(row, col);
-                    }
-                }
-
+                outMatrix.#m11 = (((matrix1.#m11 * matrix2.#m11) + (matrix1.#m12 * matrix2.#m21)) + (matrix1.#m13 * matrix2.#m31)) + (matrix1.#m14 * matrix2.#m41);
+                outMatrix.#m12 = (((matrix1.#m11 * matrix2.#m12) + (matrix1.#m12 * matrix2.#m22)) + (matrix1.#m13 * matrix2.#m32)) + (matrix1.#m14 * matrix2.#m42);
+                outMatrix.#m13 = (((matrix1.#m11 * matrix2.#m13) + (matrix1.#m12 * matrix2.#m23)) + (matrix1.#m13 * matrix2.#m33)) + (matrix1.#m14 * matrix2.#m43);
+                outMatrix.#m14 = (((matrix1.#m11 * matrix2.#m14) + (matrix1.#m12 * matrix2.#m24)) + (matrix1.#m13 * matrix2.#m34)) + (matrix1.#m14 * matrix2.#m44);
+                outMatrix.#m21 = (((matrix1.#m21 * matrix2.#m11) + (matrix1.#m22 * matrix2.#m21)) + (matrix1.#m23 * matrix2.#m31)) + (matrix1.#m24 * matrix2.#m41);
+                outMatrix.#m22 = (((matrix1.#m21 * matrix2.#m12) + (matrix1.#m22 * matrix2.#m22)) + (matrix1.#m23 * matrix2.#m32)) + (matrix1.#m24 * matrix2.#m42);
+                outMatrix.#m23 = (((matrix1.#m21 * matrix2.#m13) + (matrix1.#m22 * matrix2.#m23)) + (matrix1.#m23 * matrix2.#m33)) + (matrix1.#m24 * matrix2.#m43);
+                outMatrix.#m24 = (((matrix1.#m21 * matrix2.#m14) + (matrix1.#m22 * matrix2.#m24)) + (matrix1.#m23 * matrix2.#m34)) + (matrix1.#m24 * matrix2.#m44);
+                outMatrix.#m31 = (((matrix1.#m31 * matrix2.#m11) + (matrix1.#m32 * matrix2.#m21)) + (matrix1.#m33 * matrix2.#m31)) + (matrix1.#m34 * matrix2.#m41);
+                outMatrix.#m32 = (((matrix1.#m31 * matrix2.#m12) + (matrix1.#m32 * matrix2.#m22)) + (matrix1.#m33 * matrix2.#m32)) + (matrix1.#m34 * matrix2.#m42);
+                outMatrix.#m33 = (((matrix1.#m31 * matrix2.#m13) + (matrix1.#m32 * matrix2.#m23)) + (matrix1.#m33 * matrix2.#m33)) + (matrix1.#m34 * matrix2.#m43);
+                outMatrix.#m34 = (((matrix1.#m31 * matrix2.#m14) + (matrix1.#m32 * matrix2.#m24)) + (matrix1.#m33 * matrix2.#m34)) + (matrix1.#m34 * matrix2.#m44);
+                outMatrix.#m41 = (((matrix1.#m41 * matrix2.#m11) + (matrix1.#m42 * matrix2.#m21)) + (matrix1.#m43 * matrix2.#m31)) + (matrix1.#m44 * matrix2.#m41);
+                outMatrix.#m42 = (((matrix1.#m41 * matrix2.#m12) + (matrix1.#m42 * matrix2.#m22)) + (matrix1.#m43 * matrix2.#m32)) + (matrix1.#m44 * matrix2.#m42);
+                outMatrix.#m43 = (((matrix1.#m41 * matrix2.#m13) + (matrix1.#m42 * matrix2.#m23)) + (matrix1.#m43 * matrix2.#m33)) + (matrix1.#m44 * matrix2.#m43);
+                outMatrix.#m44 = (((matrix1.#m41 * matrix2.#m14) + (matrix1.#m42 * matrix2.#m24)) + (matrix1.#m43 * matrix2.#m34)) + (matrix1.#m44 * matrix2.#m44);
                 return outMatrix;
             });
 
@@ -807,8 +837,12 @@ export default class Matrix {
 
     static negate(...params) {
         Matrix.negate = overload([Matrix], function (matrix) {
-            const elements = [...matrix];
-            return new Matrix(...elements.map(value => -value));
+            return new Matrix(
+                -matrix.#m11, -matrix.#m12, -matrix.#m13, -matrix.#m14,
+                -matrix.#m21, -matrix.#m22, -matrix.#m23, -matrix.#m24,
+                -matrix.#m31, -matrix.#m32, -matrix.#m33, -matrix.#m34,
+                -matrix.#m41, -matrix.#m42, -matrix.#m43, -matrix.#m44
+            );
         });
 
         return Matrix.negate.apply(this, params);
@@ -816,9 +850,12 @@ export default class Matrix {
 
     static subtract(...params) {
         Matrix.subtract = overload([Matrix, Matrix], function (matrix1, matrix2) {
-            const elements1 = [...matrix1];
-            const elements2 = [...matrix2];
-            return new Matrix(...elements1.map((value, index) => value - elements2[index]));
+            return new Matrix(
+                matrix1.#m11 - matrix2.#m11, matrix1.#m12 - matrix2.#m12, matrix1.#m13 - matrix2.#m13, matrix1.#m14 - matrix2.#m14,
+                matrix1.#m21 - matrix2.#m21, matrix1.#m22 - matrix2.#m22, matrix1.#m23 - matrix2.#m23, matrix1.#m24 - matrix2.#m24,
+                matrix1.#m31 - matrix2.#m31, matrix1.#m32 - matrix2.#m32, matrix1.#m33 - matrix2.#m33, matrix1.#m34 - matrix2.#m34,
+                matrix1.#m41 - matrix2.#m41, matrix1.#m42 - matrix2.#m42, matrix1.#m43 - matrix2.#m43, matrix1.#m44 - matrix2.#m44
+            );
         });
 
         return Matrix.subtract.apply(this, params);
@@ -826,8 +863,11 @@ export default class Matrix {
 
     static transform(...params) {
         Matrix.transform = overload([Matrix, Quaternion], function (value, rotation) {
-            const { x, y, z, w } = rotation;
-            const { m11, m12, m13, m21, m22, m23, m31, m32, m33, m41, m42, m43, m14, m24, m34, m44 } = value;
+            const x = rotation.x, y = rotation.y, z = rotation.z, w = rotation.w;
+            const m11 = value.#m11, m12 = value.#m12, m13 = value.#m13, m14 = value.#m14;
+            const m21 = value.#m21, m22 = value.#m22, m23 = value.#m23, m24 = value.#m24;
+            const m31 = value.#m31, m32 = value.#m32, m33 = value.#m33, m34 = value.#m34;
+            const m41 = value.#m41, m42 = value.#m42, m43 = value.#m43, m44 = value.#m44;
 
             const x2 = x + x, y2 = y + y, z2 = z + z;
             const wx2 = w * x2, wy2 = w * y2, wz2 = w * z2;
@@ -852,10 +892,10 @@ export default class Matrix {
     static transpose(...params) {
         Matrix.transpose = overload([Matrix], function (matrix) {
             return new Matrix(
-                matrix.m11, matrix.m21, matrix.m31, matrix.m41,
-                matrix.m12, matrix.m22, matrix.m32, matrix.m42,
-                matrix.m13, matrix.m23, matrix.m33, matrix.m43,
-                matrix.m14, matrix.m24, matrix.m34, matrix.m44
+                matrix.#m11, matrix.#m21, matrix.#m31, matrix.#m41,
+                matrix.#m12, matrix.#m22, matrix.#m32, matrix.#m42,
+                matrix.#m13, matrix.#m23, matrix.#m33, matrix.#m43,
+                matrix.#m14, matrix.#m24, matrix.#m34, matrix.#m44
             );
         });
 
@@ -892,7 +932,11 @@ export default class Matrix {
 
     decompose(...params) {
         Matrix.prototype.decompose = overload([Vector3, Quaternion, Vector3], function (scale, rotation, translation) {
-            const { m11, m12, m13, m21, m22, m23, m31, m32, m33, m41, m42, m43, m14, m24, m34 } = this;
+            const m11 = this.#m11, m12 = this.#m12, m13 = this.#m13, m14 = this.#m14;
+            const m21 = this.#m21, m22 = this.#m22, m23 = this.#m23, m24 = this.#m24;
+            const m31 = this.#m31, m32 = this.#m32, m33 = this.#m33, m34 = this.#m34;
+            const m41 = this.#m41, m42 = this.#m42, m43 = this.#m43;
+
             translation.x = m41;
             translation.y = m42;
             translation.z = m43;
@@ -935,7 +979,10 @@ export default class Matrix {
 
     determinant(...params) {
         Matrix.prototype.determinant = overload([], function () {
-            const { m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44 } = this;
+            const m11 = this.#m11, m12 = this.#m12, m13 = this.#m13, m14 = this.#m14;
+            const m21 = this.#m21, m22 = this.#m22, m23 = this.#m23, m24 = this.#m24;
+            const m31 = this.#m31, m32 = this.#m32, m33 = this.#m33, m34 = this.#m34;
+            const m41 = this.#m41, m42 = this.#m42, m43 = this.#m43, m44 = this.#m44;
 
             const a = (m33 * m44) - (m34 * m43);
             const b = (m32 * m44) - (m34 * m42);
@@ -957,14 +1004,22 @@ export default class Matrix {
 
     equals(...params) {
         Matrix.prototype.equals = overload([Matrix], function (other) {
-            const m1 = [...this];
-            const m2 = [...other];
-            for (let i = 0; i < 16; i++) {
-                if (m1[i] !== m2[i]) {
-                    return false;
-                }
-            }
-            return true;
+            return (this.#m11 === other.#m11) &&
+                (this.#m22 === other.#m22) &&
+                (this.#m33 === other.#m33) &&
+                (this.#m44 === other.#m44) &&
+                (this.#m12 === other.#m12) &&
+                (this.#m13 === other.#m13) &&
+                (this.#m14 === other.#m14) &&
+                (this.#m21 === other.#m21) &&
+                (this.#m23 === other.#m23) &&
+                (this.#m24 === other.#m24) &&
+                (this.#m31 === other.#m31) &&
+                (this.#m32 === other.#m32) &&
+                (this.#m34 === other.#m34) &&
+                (this.#m41 === other.#m41) &&
+                (this.#m42 === other.#m42) &&
+                (this.#m43 === other.#m43)
         }).any(() => false);
 
         return Matrix.prototype.equals.apply(this, params);
@@ -980,22 +1035,10 @@ export default class Matrix {
 
     toJSON() {
         return {
-            m11: this.m11,
-            m12: this.m12,
-            m13: this.m13,
-            m14: this.m14,
-            m21: this.m21,
-            m22: this.m22,
-            m23: this.m23,
-            m24: this.m24,
-            m31: this.m31,
-            m32: this.m32,
-            m33: this.m33,
-            m34: this.m34,
-            m41: this.m41,
-            m42: this.m42,
-            m43: this.m43,
-            m44: this.m44
+            m11: this.#m11, m12: this.#m12, m13: this.#m13, m14: this.#m14,
+            m21: this.#m21, m22: this.#m22, m23: this.#m23, m24: this.#m24,
+            m31: this.#m31, m32: this.#m32, m33: this.#m33, m34: this.#m34,
+            m41: this.#m41, m42: this.#m42, m43: this.#m43, m44: this.#m44
         };
     }
 }

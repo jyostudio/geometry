@@ -21,9 +21,7 @@ export default class Plane {
 
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Plane[CONSTURCTOR_SYMBOL] = overload()
-            .add([], function () {
-                return Plane[CONSTURCTOR_SYMBOL].call(this, 0, 0, 0, 0);
-            })
+            .add([], function () { })
             .add([Number, Number, Number, Number], function (a, b, c, d) {
                 this.#normal.x = a;
                 this.#normal.y = b;
@@ -31,7 +29,10 @@ export default class Plane {
                 this.#d = d;
             })
             .add([Vector3, Number], function (normal, d) {
-                return Plane[CONSTURCTOR_SYMBOL].call(this, normal.x, normal.y, normal.z, d);
+                this.#normal.x = normal.x;
+                this.#normal.y = normal.y;
+                this.#normal.z = normal.z;
+                this.#d = d;
             })
             .add([Vector3, Vector3, Vector3], function (point1, point2, point3) {
                 const ab = Vector3.subtract(point2, point1);
@@ -40,10 +41,16 @@ export default class Plane {
                 const cross = Vector3.cross(ab, ac);
                 const normal = Vector3.normalize(cross);
 
-                return Plane[CONSTURCTOR_SYMBOL].call(this, normal.x, normal.y, normal.z, -(Vector3.dot(normal, point1)));
+                this.#normal.x = normal.x;
+                this.#normal.y = normal.y;
+                this.#normal.z = normal.z;
+                this.#d = -(Vector3.dot(normal, point1));
             })
             .add([Vector4], function (value) {
-                return Plane[CONSTURCTOR_SYMBOL].call(this, value.x, value.y, value.z, value.w);
+                this.#normal.x = value.x;
+                this.#normal.y = value.y;
+                this.#normal.z = value.z;
+                this.#d = value.w;
             });
 
         return Plane[CONSTURCTOR_SYMBOL].apply(this, params);
@@ -65,20 +72,20 @@ export default class Plane {
     }
 
     *[Symbol.iterator]() {
-        yield this.normal;
-        yield this.d;
+        yield this.#normal;
+        yield this.#d;
     }
 
     static normalize(...params) {
         Plane.normalize = overload([Plane], function (value) {
             const result = new Plane();
-            result.normal = Vector3.normalize(value.normal);
-            const { x: x1, y: y1, z: z1 } = result.normal;
-            const { x: x2, y: y2, z: z2 } = value.normal;
+            result.#normal = Vector3.normalize(value.#normal);
+            const x1 = result.#normal.x, y1 = result.#normal.y, z1 = result.#normal.z;
+            const x2 = value.#normal.x, y2 = value.#normal.y, z2 = value.#normal.z;
 
-            const factor = Math.sqrt(x1 * x1 + y1 * y1 + z1 * z1) /
-                Math.sqrt(x2 * x2 + y2 * y2 + z2 * z2);
-            result.d = value.d * factor;
+            const factor = Math.sqrt(x1 ** 2 + y1 ** 2 + z1 ** 2) /
+                Math.sqrt(x2 ** 2 + y2 ** 2 + z2 ** 2);
+            result.#d = value.#d * factor;
             return result;
         });
 
@@ -89,14 +96,13 @@ export default class Plane {
         Plane.transform = overload()
             .add([Plane, Matrix], function (plane, matrix) {
                 const transformedMatrix = Matrix.transpose(Matrix.invert(matrix));
-                const vector = new Vector4(plane.normal, plane.d);
-                const transformedVector = Vector4.transform(vector, transformedMatrix);
-                return new Plane(transformedVector);
+                const vector = new Vector4(plane.#normal, plane.#d);
+                return new Plane(Vector4.transform(vector, transformedMatrix));
             })
             .add([Plane, Quaternion], function (plane, rotation) {
                 const result = new Plane();
-                result.normal = Vector3.transform(plane.normal, rotation);
-                result.d = plane.d;
+                result.#normal = Vector3.transform(plane.#normal, rotation);
+                result.#d = plane.#d;
                 return result;
             });
 
@@ -113,9 +119,10 @@ export default class Plane {
 
     dot(...params) {
         Plane.prototype.dot = overload([Vector4], function (value) {
-            const { x: nx, y: ny, z: nz } = this.normal;
-            const { x: vx, y: vy, z: vz, w: vw } = value;
-            return (nx * vx) + (ny * vy) + (nz * vz) + (this.d * vw);
+            const normal = this.#normal;
+            const nx = normal.x, ny = normal.y, nz = normal.z;
+            const vx = value.x, vy = value.y, vz = value.z, vw = value.w;
+            return (nx * vx) + (ny * vy) + (nz * vz) + (this.#d * vw);
         });
 
         return Plane.prototype.dot.apply(this, params);
@@ -123,9 +130,10 @@ export default class Plane {
 
     dotCoordinate(...params) {
         Plane.prototype.dotCoordinate = overload([Vector3], function (value) {
-            const { x: nx, y: ny, z: nz } = this.normal;
-            const { x: vx, y: vy, z: vz } = value;
-            return (nx * vx) + (ny * vy) + (nz * vz) + this.d;
+            const normal = this.#normal;
+            const nx = normal.x, ny = normal.y, nz = normal.z;
+            const vx = value.x, vy = value.y, vz = value.z;
+            return (nx * vx) + (ny * vy) + (nz * vz) + this.#d;
         });
 
         return Plane.prototype.dotCoordinate.apply(this, params);
@@ -133,8 +141,9 @@ export default class Plane {
 
     dotNormal(...params) {
         Plane.prototype.dotNormal = overload([Vector3], function (value) {
-            const { x: nx, y: ny, z: nz } = this.normal;
-            const { x: vx, y: vy, z: vz } = value;
+            const normal = this.#normal;
+            const nx = normal.x, ny = normal.y, nz = normal.z;
+            const vx = value.x, vy = value.y, vz = value.z;
             return nx * vx + ny * vy + nz * vz;
         });
 
@@ -143,7 +152,7 @@ export default class Plane {
 
     equals(...params) {
         Plane.prototype.equals = overload([Plane], function (other) {
-            return this.normal.equals(other.normal) && this.d === other.d;
+            return this.#normal.equals(other.#normal) && this.#d === other.#d;
         }).any(() => false);
 
         return Plane.prototype.equals.apply(this, params);
@@ -172,9 +181,9 @@ export default class Plane {
 
     normalize(...params) {
         Plane.prototype.normalize = overload([], function () {
-            const factor = 1 / this.normal.length();
-            this.normal = Vector3.multiply(this.normal, factor);
-            this.d *= factor;
+            const factor = 1 / this.#normal.length();
+            this.#normal = Vector3.multiply(this.#normal, factor);
+            this.#d *= factor;
         });
 
         return Plane.prototype.normalize.apply(this, params);
@@ -190,8 +199,8 @@ export default class Plane {
 
     toJSON() {
         return {
-            normal: this.normal,
-            d: this.d
+            normal: this.#normal,
+            d: this.#d
         };
     }
 }

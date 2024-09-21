@@ -21,13 +21,24 @@ export default class CurveKey {
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         CurveKey[CONSTURCTOR_SYMBOL] = overload()
             .add([Number, Number], function (position, value) {
-                return CurveKey[CONSTURCTOR_SYMBOL].call(this, position, value, 0, 0, CurveContinuity.smooth);
+                this.#continuity = CurveContinuity.smooth;
+                this.#tangentIn = 0;
+                this.#tangentOut = 0;
+                this.#value = value;
+                this.#position = position;
             })
             .add([Number, Number, Number, Number], function (position, value, tangentIn, tangentOut) {
-                return CurveKey[CONSTURCTOR_SYMBOL].call(this, position, value, tangentIn, tangentOut, CurveContinuity.smooth);
+                this.#continuity = CurveContinuity.smooth;
+                this.#tangentIn = tangentIn;
+                this.#tangentOut = tangentOut;
+                this.#value = value;
+                this.#position = position;
             })
             .add([Number, Number, Number, Number, CurveContinuity], function (position, value, tangentIn, tangentOut, continuity) {
-                [this.continuity, this.tangentIn, this.tangentOut, this.value] = [continuity, tangentIn, tangentOut, value];
+                this.#continuity = continuity;
+                this.#tangentIn = tangentIn;
+                this.#tangentOut = tangentOut;
+                this.#value = value;
                 this.#position = position;
             });
 
@@ -58,11 +69,11 @@ export default class CurveKey {
     }
 
     *[Symbol.iterator]() {
-        yield this.continuity;
-        yield this.position;
-        yield this.tangentIn;
-        yield this.tangentOut;
-        yield this.value;
+        yield this.#continuity;
+        yield this.#position;
+        yield this.#tangentIn;
+        yield this.#tangentOut;
+        yield this.#value;
     }
 
     ["=="](...params) {
@@ -75,7 +86,7 @@ export default class CurveKey {
 
     clone(...params) {
         CurveKey.prototype.clone = overload([], function () {
-            return new CurveKey(this.position, this.value, this.tangentIn, this.tangentOut, this.continuity);
+            return new CurveKey(this.#position, this.#value, this.#tangentIn, this.#tangentOut, this.#continuity);
         });
 
         return CurveKey.prototype.clone.apply(this, params);
@@ -83,8 +94,8 @@ export default class CurveKey {
 
     compareTo(...params) {
         CurveKey.prototype.compareTo = overload([CurveKey], function (other) {
-            if (this.position > other.position) return 1;
-            else if (this.position < other.position) return -1;
+            if (this.#position > other.#position) return 1;
+            else if (this.#position < other.#position) return -1;
             else return 0;
         });
 
@@ -93,11 +104,11 @@ export default class CurveKey {
 
     equals(...params) {
         CurveKey.prototype.equals = overload([CurveKey], function (other) {
-            return (this.position === other.position) &&
-                (this.value === other.value) &&
-                (this.tangentIn === other.tangentIn) &&
-                (this.tangentOut === other.tangentOut) &&
-                (this.continuity === other.continuity);
+            return (this.#position === other.#position) &&
+                (this.#value === other.#value) &&
+                (this.#tangentIn === other.#tangentIn) &&
+                (this.#tangentOut === other.#tangentOut) &&
+                (this.#continuity === other.#continuity);
         }).any(() => false);
 
         return CurveKey.prototype.equals.apply(this, params);
@@ -113,11 +124,11 @@ export default class CurveKey {
 
     toJSON() {
         return {
-            position: this.position,
-            value: this.value,
-            tangentIn: this.tangentIn,
-            tangentOut: this.tangentOut,
-            continuity: this.continuity
+            position: this.#position,
+            value: this.#value,
+            tangentIn: this.#tangentIn,
+            tangentOut: this.#tangentOut,
+            continuity: this.#continuity
         };
     }
 }

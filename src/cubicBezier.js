@@ -166,11 +166,11 @@ export default class CubicBezier {
     }
 
     get v2() {
-        return new Vector2(this.x1, this.y1);
+        return new Vector2(this.#x1, this.#y1);
     }
 
     get v3() {
-        return new Vector2(this.x2, this.y2);
+        return new Vector2(this.#x2, this.#y2);
     }
 
     get v4() {
@@ -187,7 +187,10 @@ export default class CubicBezier {
             })
             .add([Number, Number, Number, Number], function (x1, y1, x2, y2) {
                 this.#dontCalc = true;
-                [this.x1, this.y1, this.x2, this.y2] = [x1, y1, x2, y2];
+                this.#x1 = x1;
+                this.#y1 = y1;
+                this.#x2 = x2;
+                this.#y2 = y2;
                 this.#v1 = new Vector2();
                 this.#v2 = new Vector2();
                 this.#v3 = new Vector2();
@@ -293,7 +296,7 @@ export default class CubicBezier {
 
     equals(...params) {
         CubicBezier.prototype.equals = overload([CubicBezier], function (cubicBezier) {
-            return this.v1.equals(cubicBezier.v1) && this.v2.equals(cubicBezier.v2) && this.v3.equals(cubicBezier.v3) && this.v4.equals(cubicBezier.v4);
+            return this.v2.equals(cubicBezier.v2) && this.v3.equals(cubicBezier.v3);
         }).any(() => false);
 
         return CubicBezier.prototype.equals.apply(this, params);

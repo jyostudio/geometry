@@ -17,11 +17,10 @@ export default class Point {
 
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Point[CONSTURCTOR_SYMBOL] = overload()
-            .add([], function () {
-                [this.x, this.y] = [0, 0];
-            })
+            .add([], function () { })
             .add([Number, Number], function (x, y) {
-                [this.x, this.y] = [x, y];
+                this.x = x;
+                this.y = y;
             });
 
         return Point[CONSTURCTOR_SYMBOL].apply(this, params);
@@ -49,7 +48,7 @@ export default class Point {
 
     static ["-"](...params) {
         Point.prototype["-"] = overload([Point], function (other) {
-            return new Point(-other.x, -other.y);
+            return new Point(-other.#x, -other.#y);
         });
 
         return Point.prototype["-"].apply(this, params);
@@ -57,7 +56,7 @@ export default class Point {
 
     ["+"](...params) {
         Point.prototype["+"] = overload([Point], function (other) {
-            return new Point(this.x + other.x, this.y + other.y);
+            return new Point(this.#x + other.#x, this.#y + other.#y);
         });
 
         return Point.prototype["+"].apply(this, params);
@@ -65,7 +64,7 @@ export default class Point {
 
     ["-"](...params) {
         Point.prototype["-"] = overload([Point], function (other) {
-            return new Point(this.x - other.x, this.y - other.y);
+            return new Point(this.#x - other.#x, this.#y - other.#y);
         });
 
         return Point.prototype["-"].apply(this, params);
@@ -74,10 +73,10 @@ export default class Point {
     ["*"](...params) {
         Point.prototype["*"] = overload()
             .add([Number], function (scalar) {
-                return new Point(this.x * scalar, this.y * scalar);
+                return new Point(this.#x * scalar, this.#y * scalar);
             })
             .add([Point], function (other) {
-                return new Point(this.x * other.x, this.y * other.y);
+                return new Point(this.#x * other.#x, this.#y * other.#y);
             });
 
         return Point.prototype["*"].apply(this, params);
@@ -86,10 +85,10 @@ export default class Point {
     ["/"](...params) {
         Point.prototype["/"] = overload()
             .add([Number], function (scalar) {
-                return new Point(this.x / scalar, this.y / scalar);
+                return new Point(this.#x / scalar, this.#y / scalar);
             })
             .add([Point], function (other) {
-                return new Point(this.x / other.x, this.y / other.y);
+                return new Point(this.#x / other.x, this.#y / other.y);
             });
 
         return Point.prototype["/"].apply(this, params);
@@ -105,7 +104,7 @@ export default class Point {
 
     equals(...params) {
         Point.prototype.equals = overload([Point], function (other) {
-            return this.#x === other.x && this.#y === other.y;
+            return this.#x === other.#x && this.#y === other.#y;
         }).any(() => false);
 
         return Point.prototype.equals.apply(this, params);

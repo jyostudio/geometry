@@ -34,14 +34,14 @@ export default class Vector2 {
 
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Vector2[CONSTURCTOR_SYMBOL] = overload()
-            .add([], function () {
-                [this.x, this.y] = [0, 0];
-            })
+            .add([], function () { })
             .add([Number], function (value) {
-                [this.x, this.y] = [value, value];
+                this.#x = value;
+                this.#y = value;
             })
             .add([Number, Number], function (x, y) {
-                [this.x, this.y] = [x, y];
+                this.#x = x;
+                this.#y = y;
             });
 
         return Vector2[CONSTURCTOR_SYMBOL].apply(this, params);
@@ -63,15 +63,15 @@ export default class Vector2 {
     }
 
     *[Symbol.iterator]() {
-        yield this.x;
-        yield this.y;
+        yield this.#x;
+        yield this.#y;
     }
 
     static add(...params) {
         Vector2.add = overload([Vector2, Vector2], function (value1, value2) {
             return new Vector2(
-                value1.x + value2.x,
-                value1.y + value2.y
+                value1.#x + value2.#x,
+                value1.#y + value2.#y
             );
         });
 
@@ -81,8 +81,8 @@ export default class Vector2 {
     static barycentric(...params) {
         Vector2.barycentric = overload([Vector2, Vector2, Vector2, Number, Number], function (value1, value2, value3, amount1, amount2) {
             return new Vector2(
-                MathHelper.barycentric(value1.x, value2.x, value3.x, amount1, amount2),
-                MathHelper.barycentric(value1.y, value2.y, value3.y, amount1, amount2)
+                MathHelper.barycentric(value1.#x, value2.#x, value3.#x, amount1, amount2),
+                MathHelper.barycentric(value1.#y, value2.#y, value3.#y, amount1, amount2)
             );
         });
 
@@ -92,8 +92,8 @@ export default class Vector2 {
     static catmullRom(...params) {
         Vector2.catmullRom = overload([Vector2, Vector2, Vector2, Vector2, Number], function (value1, value2, value3, value4, amount) {
             return new Vector2(
-                MathHelper.catmullRom(value1.x, value2.x, value3.x, value4.x, amount),
-                MathHelper.catmullRom(value1.y, value2.y, value3.y, value4.y, amount)
+                MathHelper.catmullRom(value1.#x, value2.#x, value3.#x, value4.#x, amount),
+                MathHelper.catmullRom(value1.#y, value2.#y, value3.#y, value4.#y, amount)
             );
         });
 
@@ -103,8 +103,8 @@ export default class Vector2 {
     static clamp(...params) {
         Vector2.clamp = overload([Vector2, Vector2, Vector2], function (value1, min, max) {
             return new Vector2(
-                MathHelper.clamp(value1.x, min.x, max.x),
-                MathHelper.clamp(value1.y, min.y, max.y)
+                MathHelper.clamp(value1.#x, min.#x, max.#x),
+                MathHelper.clamp(value1.#y, min.#y, max.#y)
             );
         });
 
@@ -113,7 +113,9 @@ export default class Vector2 {
 
     static distance(...params) {
         Vector2.distance = overload([Vector2, Vector2], function (value1, value2) {
-            return Math.sqrt(this.distanceSquared(value1, value2));
+            const v1 = value1.#x - value2.#x;
+            const v2 = value1.#y - value2.#y;
+            return Math.sqrt((v1 * v1) + (v2 * v2));
         });
 
         return Vector2.distance.apply(this, params);
@@ -121,8 +123,8 @@ export default class Vector2 {
 
     static distanceSquared(...params) {
         Vector2.distanceSquared = overload([Vector2, Vector2], function (value1, value2) {
-            const v1 = value1.x - value2.x;
-            const v2 = value1.y - value2.y;
+            const v1 = value1.#x - value2.#x;
+            const v2 = value1.#y - value2.#y;
             return (v1 * v1) + (v2 * v2);
         });
 
@@ -134,14 +136,14 @@ export default class Vector2 {
             .add([Vector2, Number], function (value1, divider) {
                 const factor = 1 / divider;
                 return new Vector2(
-                    value1.x * factor,
-                    value1.y * factor
+                    value1.#x * factor,
+                    value1.#y * factor
                 );
             })
             .add([Vector2, Vector2], function (value1, value2) {
                 return new Vector2(
-                    value1.x / value2.x,
-                    value1.y / value2.y
+                    value1.#x / value2.#x,
+                    value1.#y / value2.#y
                 );
             });
 
@@ -150,7 +152,7 @@ export default class Vector2 {
 
     static dot(...params) {
         Vector2.dot = overload([Vector2, Vector2], function (value1, value2) {
-            return (value1.x * value2.x) + (value1.y * value2.y);
+            return (value1.#x * value2.#x) + (value1.#y * value2.#y);
         });
 
         return Vector2.dot.apply(this, params);
@@ -159,8 +161,8 @@ export default class Vector2 {
     static hermite(...params) {
         Vector2.hermite = overload([Vector2, Vector2, Vector2, Vector2, Number], function (value1, tangent1, value2, tangent2, amount) {
             return new Vector2(
-                MathHelper.hermite(value1.x, tangent1.x, value2.x, tangent2.x, amount),
-                MathHelper.hermite(value1.y, tangent1.y, value2.y, tangent2.y, amount)
+                MathHelper.hermite(value1.#x, tangent1.#x, value2.#x, tangent2.#x, amount),
+                MathHelper.hermite(value1.#y, tangent1.#y, value2.#y, tangent2.#y, amount)
             );
         });
 
@@ -170,8 +172,8 @@ export default class Vector2 {
     static lerp(...params) {
         Vector2.lerp = overload([Vector2, Vector2, Number], function (value1, value2, amount) {
             return new Vector2(
-                MathHelper.lerp(value1.x, value2.x, amount),
-                MathHelper.lerp(value1.y, value2.y, amount)
+                MathHelper.lerp(value1.#x, value2.#x, amount),
+                MathHelper.lerp(value1.#y, value2.#y, amount)
             );
         });
 
@@ -181,8 +183,8 @@ export default class Vector2 {
     static max(...params) {
         Vector2.max = overload([Vector2, Vector2], function (value1, value2) {
             return new Vector2(
-                value1.x > value2.x ? value1.x : value2.x,
-                value1.y > value2.y ? value1.y : value2.y
+                value1.#x > value2.#x ? value1.#x : value2.#x,
+                value1.#y > value2.#y ? value1.#y : value2.#y
             );
         });
 
@@ -192,8 +194,8 @@ export default class Vector2 {
     static min(...params) {
         Vector2.min = overload([Vector2, Vector2], function (value1, value2) {
             return new Vector2(
-                value1.x < value2.x ? value1.x : value2.x,
-                value1.y < value2.y ? value1.y : value2.y
+                value1.#x < value2.#x ? value1.#x : value2.#x,
+                value1.#y < value2.#y ? value1.#y : value2.#y
             );
         });
 
@@ -204,14 +206,14 @@ export default class Vector2 {
         Vector2.multiply = overload()
             .add([Vector2, Number], function (value1, scaleFactor) {
                 return new Vector2(
-                    value1.x * scaleFactor,
-                    value1.y * scaleFactor
+                    value1.#x * scaleFactor,
+                    value1.#y * scaleFactor
                 );
             })
             .add([Vector2, Vector2], function (value1, value2) {
                 return new Vector2(
-                    value1.x * value2.x,
-                    value1.y * value2.y
+                    value1.#x * value2.#x,
+                    value1.#y * value2.#y
                 );
             });
 
@@ -221,8 +223,8 @@ export default class Vector2 {
     static negate(...params) {
         Vector2.negate = overload([Vector2], function (value) {
             return new Vector2(
-                -value.x,
-                -value.y
+                -value.#x,
+                -value.#y
             );
         });
 
@@ -231,10 +233,10 @@ export default class Vector2 {
 
     static normalize(...params) {
         Vector2.normalize = overload([Vector2], function (value) {
-            const val = 1.0 / Math.sqrt((value.x * value.x) + (value.y * value.y));
+            const val = 1.0 / Math.sqrt((value.#x * value.#x) + (value.#y * value.#y));
             return new Vector2(
-                value.x * val,
-                value.y * val
+                value.#x * val,
+                value.#y * val
             );
         });
 
@@ -243,10 +245,10 @@ export default class Vector2 {
 
     static reflect(...params) {
         Vector2.reflect = overload([Vector2, Vector2], function (vector, normal) {
-            const val = 2.0 * ((vector.x * normal.x) + (vector.y * normal.y));
+            const val = 2.0 * ((vector.#x * normal.#x) + (vector.#y * normal.#y));
             return new Vector2(
-                vector.x - (normal.x * val),
-                vector.y - (normal.y * val)
+                vector.#x - (normal.#x * val),
+                vector.#y - (normal.#y * val)
             );
         });
 
@@ -256,8 +258,8 @@ export default class Vector2 {
     static smoothStep(...params) {
         Vector2.smoothStep = overload([Vector2, Vector2, Number], function (value1, value2, amount) {
             return new Vector2(
-                MathHelper.smoothStep(value1.x, value2.x, amount),
-                MathHelper.smoothStep(value1.y, value2.y, amount)
+                MathHelper.smoothStep(value1.#x, value2.#x, amount),
+                MathHelper.smoothStep(value1.#y, value2.#y, amount)
             );
         });
 
@@ -267,8 +269,8 @@ export default class Vector2 {
     static subtract(...params) {
         Vector2.subtract = overload([Vector2, Vector2], function (value1, value2) {
             return new Vector2(
-                value1.x - value2.x,
-                value1.y - value2.y
+                value1.#x - value2.#x,
+                value1.#y - value2.#y
             );
         });
 
@@ -279,13 +281,13 @@ export default class Vector2 {
         Vector2.transform = overload()
             .add([Vector2, Matrix], function (position, matrix) {
                 return new Vector2(
-                    (position.x * matrix.m11) + (position.y * matrix.m21) + matrix.m41,
-                    (position.x * matrix.m12) + (position.y * matrix.m22) + matrix.m42
+                    (position.#x * matrix.m11) + (position.#y * matrix.m21) + matrix.m41,
+                    (position.#x * matrix.m12) + (position.#y * matrix.m22) + matrix.m42
                 );
             })
             .add([Vector2, Quaternion], function (value, rotation) {
-                const { x: rx, y: ry, z: rz, w: rw } = rotation;
-                const { x, y } = value;
+                const rx = rotation.x, ry = rotation.y, rz = rotation.z, rw = rotation.w;
+                const x = value.#x, y = value.#y;
                 const rot1 = new Vector3(rx + rx, ry + ry, rz + rz);
                 const rot2 = new Vector3(rx, rx, rw);
                 const rot3 = new Vector3(1, ry, rz);
@@ -308,8 +310,8 @@ export default class Vector2 {
                 for (let x = 0; x < length; x++) {
                     const position = sourceArray[sourceIndex + x];
                     const destination = destinationArray[destinationIndex + x];
-                    destination.x = (position.x * matrix.m11) + (position.y * matrix.m21) + matrix.m41;
-                    destination.y = (position.x * matrix.m12) + (position.y * matrix.m22) + matrix.m42;
+                    destination.#x = (position.#x * matrix.m11) + (position.#y * matrix.m21) + matrix.m41;
+                    destination.#y = (position.#x * matrix.m12) + (position.#y * matrix.m22) + matrix.m42;
                     destinationArray[destinationIndex + x] = destination;
                 }
             })
@@ -328,8 +330,8 @@ export default class Vector2 {
 
                     const v = this.transform(position, rotation);
 
-                    destination.x = v.x;
-                    destination.y = v.y;
+                    destination.#x = v.#x;
+                    destination.#y = v.#y;
 
                     destinationArray[destinationIndex + x] = destination;
                 }
@@ -348,8 +350,8 @@ export default class Vector2 {
         Vector2.transformNormal = overload()
             .add([Vector2, Matrix], function (normal, matrix) {
                 return new Vector2(
-                    normal.x * matrix.m11 + normal.y * matrix.m21,
-                    normal.x * matrix.m12 + normal.y * matrix.m22
+                    normal.#x * matrix.m11 + normal.#y * matrix.m21,
+                    normal.#x * matrix.m12 + normal.#y * matrix.m22
                 );
             })
             .add([List.T(Vector2), Number, Matrix, List.T(Vector2), Number, Number], function (sourceArray, sourceIndex, matrix, destinationArray, destinationIndex, length) {
@@ -408,7 +410,7 @@ export default class Vector2 {
 
     length(...params) {
         Vector2.prototype.length = overload([], function () {
-            return Math.sqrt(this.lengthSquared())
+            return Math.sqrt(this.#x ** 2 + this.#y ** 2);
         });
 
         return Vector2.prototype.length.apply(this, params);
@@ -416,7 +418,7 @@ export default class Vector2 {
 
     lengthSquared(...params) {
         Vector2.prototype.lengthSquared = overload([], function () {
-            return this.x * this.x + this.y * this.y;
+            return this.#x ** 2 + this.#y ** 2;
         });
 
         return Vector2.prototype.lengthSquared.apply(this, params);
@@ -425,8 +427,8 @@ export default class Vector2 {
     normalize(...params) {
         Vector2.prototype.normalize = overload([], function () {
             const val = 1.0 / this.length();
-            this.x *= val;
-            this.y *= val;
+            this.#x *= val;
+            this.#y *= val;
         });
 
         return Vector2.prototype.normalize.apply(this, params);
@@ -434,7 +436,7 @@ export default class Vector2 {
 
     equals(...params) {
         Vector2.prototype.equals = overload([Vector2], function (other) {
-            return this.x === other.x && this.y === other.y;
+            return this.#x === other.#x && this.#y === other.#y;
         }).any(() => false);
 
         return Vector2.prototype.equals.apply(this, params);
@@ -449,6 +451,6 @@ export default class Vector2 {
     }
 
     toJSON() {
-        return { x: this.x, y: this.y };
+        return { x: this.#x, y: this.#y };
     }
 }

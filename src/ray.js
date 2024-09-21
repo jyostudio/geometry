@@ -19,10 +19,12 @@ export default class Ray {
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Ray[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {
-                [this.position, this.direction] = [Vector3.zero, Vector3.zero];
+                this.#position = Vector3.zero;
+                this.#direction = Vector3.zero;
             })
             .add([Vector3, Vector3], function (position, direction) {
-                [this.position, this.direction] = [position, direction];
+                this.#position = position;
+                this.#direction = direction;
             });
 
         return Ray[CONSTURCTOR_SYMBOL].apply(this, params);
@@ -44,8 +46,8 @@ export default class Ray {
     }
 
     *[Symbol.iterator]() {
-        yield this.position;
-        yield this.direction;
+        yield this.#position;
+        yield this.#direction;
     }
 
     ["=="](...params) {
@@ -61,8 +63,8 @@ export default class Ray {
             .add([BoundingBox], function (box) {
                 let tMin = -Infinity;
                 let tMax = Infinity;
-                const { x: positionX, y: positionY, z: positionZ } = this.position;
-                const { x: directionX, y: directionY, z: directionZ } = this.direction;
+                const positionX = this.#position.x, positionY = this.#position.y, positionZ = this.#position.z;
+                const directionX = this.#direction.x, directionY = this.#direction.y, directionZ = this.#direction.z;
 
                 const checkAxis = (position, direction, min, max) => {
                     if (Math.abs(direction) < Number.EPSILON) {
@@ -92,14 +94,14 @@ export default class Ray {
                 return frustum.intersects(this);
             })
             .add([BoundingSphere], function (sphere) {
-                const difference = Vector3.subtract(sphere.center, this.position);
+                const difference = Vector3.subtract(sphere.center, this.#position);
 
                 const differenceLengthSquared = difference.lengthSquared();
                 const sphereRadiusSquared = sphere.radius * sphere.radius;
 
                 if (differenceLengthSquared < sphereRadiusSquared) return 0;
 
-                const distanceAlongRay = Vector3.dot(this.direction, difference);
+                const distanceAlongRay = Vector3.dot(this.#direction, difference);
 
                 if (distanceAlongRay < 0) return null;
 
@@ -108,10 +110,10 @@ export default class Ray {
                 return (dist < 0) ? null : distanceAlongRay - Math.sqrt(dist);
             })
             .add([Plane], function (plane) {
-                const den = Vector3.dot(this.direction, plane.normal);
+                const den = Vector3.dot(this.#direction, plane.normal);
                 if (Math.abs(den) < 0.00001) return null;
 
-                let result = (-plane.d - Vector3.dot(plane.normal, this.position)) / den;
+                let result = (-plane.d - Vector3.dot(plane.normal, this.#position)) / den;
 
                 if (result < 0.0) {
                     if (result < -0.00001) return null;
@@ -126,7 +128,7 @@ export default class Ray {
 
     equals(...params) {
         Ray.prototype.equals = overload([Ray], function (other) {
-            return this.direction.equals(other.direction) && this.position.equals(other.position);
+            return this.#direction.equals(other.#direction) && this.#position.equals(other.#position);
         }).any(() => false);
 
         return Ray.prototype.equals.apply(this, params);
@@ -142,8 +144,8 @@ export default class Ray {
 
     toJSON() {
         return {
-            position: this.position,
-            direction: this.direction
+            position: this.#position,
+            direction: this.#direction
         };
     }
 }

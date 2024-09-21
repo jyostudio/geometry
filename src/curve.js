@@ -46,21 +46,21 @@ export default class Curve {
     }
 
     *[Symbol.iterator]() {
-        yield this.postLoop;
-        yield this.preLoop;
+        yield this.#postLoop;
+        yield this.#preLoop;
     }
 
     #getNumberOfCycle(position) {
-        let cycle = (position - this.keys[0].position) / (this.keys[this.keys.length - 1].position - this.keys[0].position);
+        let cycle = (position - this.#keys[0].position) / (this.#keys[this.keys.length - 1].position - this.#keys[0].position);
         if (cycle < 0) cycle--;
         return parseInt(cycle);
     }
 
     #getCurvePosition(position) {
-        let prev = this.keys[0];
+        let prev = this.#keys[0];
         let next;
-        for (let i = 1; i < this.keys.length; ++i) {
-            next = this.keys[i];
+        for (let i = 1; i < this.#keys.length; ++i) {
+            next = this.#keys[i];
             if (next.position >= position) {
                 if (prev.continuity == CurveContinuity.step) {
                     if (position >= 1) return next.value;
@@ -165,7 +165,7 @@ export default class Curve {
                 this.computeTangents(tangentType, tangentType);
             })
             .add([CurveLoopType, CurveLoopType], function (tangentInType, tangentOutType) {
-                for (let i = 0; i < this.keys.length; ++i) {
+                for (let i = 0; i < this.#keys.length; ++i) {
                     this.computeTangent(i, tangentInType, tangentOutType);
                 }
             });
@@ -175,12 +175,12 @@ export default class Curve {
 
     evaluate(...params) {
         Curve.prototype.evaluate = overload([Number], function (position) {
-            if (this.keys.length === 0) return 0;
+            if (this.#keys.length === 0) return 0;
 
-            if (this.keys.length === 1) return this.keys[0].value;
+            if (this.#keys.length === 1) return this.#keys[0].value;
 
-            const first = this.keys[0];
-            const last = this.keys[this.keys.length - 1];
+            const first = this.#keys[0];
+            const last = this.#keys[this.#keys.length - 1];
             let cycle, virtualPos;
 
             if (position < first.position) {
@@ -248,7 +248,7 @@ export default class Curve {
 
     equals(...params) {
         Curve.prototype.equals = overload([Curve], function (other) {
-            return this.postLoop === other.postLoop && this.preLoop === other.preLoop && this.keys.equals(other.keys);
+            return this.#postLoop === other.#postLoop && this.#preLoop === other.#preLoop && this.#keys.equals(other.#keys);
         }).any(() => false);
 
         return Curve.prototype.equals.apply(this, params);
@@ -264,9 +264,9 @@ export default class Curve {
 
     toJSON() {
         return {
-            postLoop: this.postLoop,
-            preLoop: this.preLoop,
-            keys: this.keys
+            postLoop: this.#postLoop,
+            preLoop: this.#preLoop,
+            keys: this.#keys
         };
     }
 }

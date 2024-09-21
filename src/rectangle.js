@@ -1,5 +1,4 @@
 import overload from "@jyostudio/overload";
-import MathHelper from "./math_helper.js";
 import Point from "./point.js";
 
 const CONSTURCTOR_SYMBOL = Symbol("constructor");
@@ -18,7 +17,7 @@ export default class Rectangle {
     #height = 0;
 
     get isEmpty() {
-        return this.#x === 0 && this.#y === 0 && this.#width === 0 && this.#height === 0;
+        return !this.#x && !this.#y && !this.#width && !this.#height;
     }
 
     get bottom() {
@@ -47,11 +46,12 @@ export default class Rectangle {
 
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Rectangle[CONSTURCTOR_SYMBOL] = overload()
-            .add([], function () {
-                [this.x, this.y, this.width, this.height] = [0, 0, 0, 0];
-            })
+            .add([], function () { })
             .add([Number, Number, Number, Number], function (x, y, width, height) {
-                [this.x, this.y, this.width, this.height] = [x, y, width, height];
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
             });
 
         return Rectangle[CONSTURCTOR_SYMBOL].apply(this, params);
@@ -77,7 +77,10 @@ export default class Rectangle {
             },
             location: {
                 get: () => new Point(this.#x, this.#y),
-                set: overload([Point], value => [this.#x, this.#y] = [value.x, value.y])
+                set: overload([Point], value => {
+                    this.#x = value.x;
+                    this.#y = value.y;
+                })
             }
         });
 
@@ -94,13 +97,13 @@ export default class Rectangle {
     static intersect(...params) {
         Rectangle.intersect = overload([Rectangle, Rectangle], function (value1, value2) {
             if (value1.intersects(value2)) {
-                const [x1, y1, w1, h1] = [value1.#x, value1.#y, value1.#width, value1.#height];
-                const [x2, y2, w2, h2] = [value2.#x, value2.#y, value2.#width, value2.#height];
+                const x1 = value1.#x, y1 = value1.#y, w1 = value1.#width, h1 = value1.#height;
+                const x2 = value2.#x, y2 = value2.#y, w2 = value2.#width, h2 = value2.#height;
 
-                const rightSide = MathHelper.min(x1 + w1, x2 + w2);
-                const leftSide = MathHelper.max(x1, x2);
-                const topSide = MathHelper.max(y1, y2);
-                const bottomSide = MathHelper.min(y1 + h1, y2 + h2);
+                const rightSide = Math.min(x1 + w1, x2 + w2);
+                const leftSide = Math.max(x1, x2);
+                const topSide = Math.max(y1, y2);
+                const bottomSide = Math.min(y1 + h1, y2 + h2);
 
                 return new Rectangle(leftSide, topSide, rightSide - leftSide, bottomSide - topSide);
             }
@@ -113,14 +116,13 @@ export default class Rectangle {
 
     static union(...params) {
         Rectangle.union = overload([Rectangle, Rectangle], function (value1, value2) {
-            let x1, y1, right1, bottom1, x2, y2, right2, bottom2;
-            [x1, y1, right1, bottom1] = [value1.#x, value1.#y, value1.right, value1.bottom];
-            [x2, y2, right2, bottom2] = [value2.#x, value2.#y, value2.right, value2.bottom];
+            const x1 = value1.#x, y1 = value1.#y, right1 = value1.right, bottom1 = value1.bottom;
+            const x2 = value2.#x, y2 = value2.#y, right2 = value2.right, bottom2 = value2.bottom;
 
-            const x = MathHelper.min(x1, x2);
-            const y = MathHelper.min(y1, y2);
-            const right = MathHelper.max(right1, right2);
-            const bottom = MathHelper.max(bottom1, bottom2);
+            const x = Math.min(x1, x2);
+            const y = Math.min(y1, y2);
+            const right = Math.max(right1, right2);
+            const bottom = Math.max(bottom1, bottom2);
 
             return new Rectangle(x, y, right - x, bottom - y);
         });
@@ -159,8 +161,8 @@ export default class Rectangle {
 
     equals(...params) {
         Rectangle.prototype.equals = overload([Rectangle], function (other) {
-            const { x, y, width, height } = other;
-            return Object.is(this.#x, x) && Object.is(this.#y, y) && Object.is(this.#width, width) && Object.is(this.#height, height);
+            const x = other.#x, y = other.#y, width = other.#width, height = other.#height;
+            return this.#x === x && this.#y === y && this.#width === width && this.#height === height;
         }).any(() => false);
 
         return Rectangle.prototype.equals.apply(this, params);
@@ -179,12 +181,8 @@ export default class Rectangle {
 
     intersects(...params) {
         Rectangle.prototype.intersects = overload([Rectangle], function (value) {
-            const { left, right, top, bottom } = value;
-            const thisLeft = this.left;
-            const thisRight = this.right;
-            const thisTop = this.top;
-            const thisBottom = this.bottom;
-
+            const left = value.left, right = value.right, top = value.top, bottom = value.bottom;
+            const thisLeft = this.left, thisRight = this.right, thisTop = this.top, thisBottom = this.bottom;
             return left < thisRight && thisLeft < right && top < thisBottom && thisTop < bottom;
         });
 
@@ -198,8 +196,8 @@ export default class Rectangle {
                 this.y += offsetY;
             })
             .add([Point], function (amount) {
-                this.x += amount.x;
-                this.y += amount.y;
+                this.#x += amount.x;
+                this.#y += amount.y;
             });
 
         return Rectangle.prototype.offset.apply(this, params);

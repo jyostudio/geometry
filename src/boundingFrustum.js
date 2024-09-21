@@ -75,7 +75,7 @@ export default class BoundingFrustum {
     }
 
     *[Symbol.iterator]() {
-        yield this.matrix;
+        yield this.#matrix;
     }
 
     #createCorners() {
@@ -101,7 +101,10 @@ export default class BoundingFrustum {
         const m = this.#matrix;
         const p = this.#planes;
 
-        const { m11, m12, m13, m14, m21, m22, m23, m24, m31, m32, m33, m34, m41, m42, m43, m44 } = m;
+        const m11 = m.m11, m12 = m.m12, m13 = m.m13, m14 = m.m14;
+        const m21 = m.m21, m22 = m.m22, m23 = m.m23, m24 = m.m24;
+        const m31 = m.m31, m32 = m.m32, m33 = m.m33, m34 = m.m34;
+        const m41 = m.m41, m42 = m.m42, m43 = m.m43, m44 = m.m44;
 
         p.addRange([
             new Plane(-m13, -m23, -m33, -m43),
@@ -143,10 +146,11 @@ export default class BoundingFrustum {
     }
 
     #normalizePlane(p) {
-        const factor = 1 / p.normal.length();
-        p.normal.x *= factor;
-        p.normal.y *= factor;
-        p.normal.z *= factor;
+        const planeNormal = p.normal;
+        const factor = 1 / planeNormal.length();
+        planeNormal.x *= factor;
+        planeNormal.y *= factor;
+        planeNormal.z *= factor;
         p.d *= factor;
     }
 
@@ -223,7 +227,7 @@ export default class BoundingFrustum {
 
     equals(...params) {
         BoundingFrustum.prototype.equals = overload([BoundingFrustum], function (other) {
-            return this.matrix.equals(other.matrix);
+            return this.#matrix.equals(other.#matrix);
         }).any(() => false);
 
         return BoundingFrustum.prototype.equals.apply(this, params);

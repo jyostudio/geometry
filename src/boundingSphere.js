@@ -23,10 +23,12 @@ export default class BoundingSphere {
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         BoundingSphere[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {
-                [this.center, this.radius] = [Vector3.zero, 0];
+                this.#center = Vector3.zero;
+                this.#radius = 0;
             })
             .add([Vector3, Number], function (center, radius) {
-                [this.center, this.radius] = [center, radius];
+                this.#center = center;
+                this.#radius = radius;
             });
 
         return BoundingSphere[CONSTURCTOR_SYMBOL].apply(this, params);
@@ -48,8 +50,8 @@ export default class BoundingSphere {
     }
 
     *[Symbol.iterator]() {
-        yield this.center;
-        yield this.radius;
+        yield this.#center;
+        yield this.#radius;
     }
 
     static createFromBoundingBox(...params) {
@@ -134,26 +136,26 @@ export default class BoundingSphere {
 
     static createMerged(...params) {
         BoundingSphere.createMerged = overload([BoundingSphere, BoundingSphere], function (original, additional) {
-            let oCenterToACenter = Vector3.subtract(additional.center, original.center);
+            let oCenterToACenter = Vector3.subtract(additional.#center, original.#center);
             const distance = oCenterToACenter.length();
 
-            if (distance <= original.radius + additional.radius) {
-                if (distance <= original.radius - additional.radius) {
-                    return new BoundingSphere(original.center, original.radius);
+            if (distance <= original.#radius + additional.#radius) {
+                if (distance <= original.#radius - additional.#radius) {
+                    return new BoundingSphere(original.#center, original.#radius);
                 }
 
-                if (distance <= additional.radius - original.radius) {
-                    return new BoundingSphere(additional.center, additional.radius);
+                if (distance <= additional.#radius - original.#radius) {
+                    return new BoundingSphere(additional.#center, additional.#radius);
                 }
             }
 
-            const leftRadius = Math.max(original.radius - distance, additional.radius);
-            const rightRadius = Math.max(original.radius + distance, additional.radius);
+            const leftRadius = Math.max(original.#radius - distance, additional.#radius);
+            const rightRadius = Math.max(original.#radius + distance, additional.#radius);
             const adjustmentFactor = (leftRadius - rightRadius) / (2 * distance);
             oCenterToACenter = Vector3.add(oCenterToACenter, Vector3.multiply(oCenterToACenter, adjustmentFactor));
 
             return new BoundingSphere(
-                Vector3.add(original.center, oCenterToACenter),
+                Vector3.add(original.#center, oCenterToACenter),
                 (leftRadius + rightRadius) / 2
             );
         });
@@ -195,11 +197,11 @@ export default class BoundingSphere {
                     return 0;
                 };
 
-                dmin += calculateDistance(this.center.x, box.min.x, box.max.x);
-                dmin += calculateDistance(this.center.y, box.min.y, box.max.y);
-                dmin += calculateDistance(this.center.z, box.min.z, box.max.z);
+                dmin += calculateDistance(this.#center.x, box.min.x, box.max.x);
+                dmin += calculateDistance(this.#center.y, box.min.y, box.max.y);
+                dmin += calculateDistance(this.#center.z, box.min.z, box.max.z);
 
-                if (dmin <= this.radius * this.radius) {
+                if (dmin <= this.#radius ** 2) {
                     return ContainmentType.intersects;
                 }
 
@@ -219,21 +221,21 @@ export default class BoundingSphere {
 
                 let dmin = 0;
 
-                if (dmin <= this.radius * this.radius) return ContainmentType.intersects;
+                if (dmin <= this.#radius ** 2) return ContainmentType.intersects;
                 return ContainmentType.disjoint;
             })
             .add([BoundingSphere], function (sphere) {
-                const sqDistance = Vector3.distanceSquared(sphere.center, this.center);
-                const radiusSum = sphere.radius + this.radius;
-                const radiusDiff = this.radius - sphere.radius;
+                const sqDistance = Vector3.distanceSquared(sphere.#center, this.#center);
+                const radiusSum = sphere.#radius + this.#radius;
+                const radiusDiff = this.#radius - sphere.#radius;
 
                 if (sqDistance > radiusSum * radiusSum) return ContainmentType.disjoint;
                 else if (sqDistance <= radiusDiff * radiusDiff) return ContainmentType.contains;
                 else return ContainmentType.intersects;
             })
             .add([Vector3], function (point) {
-                const sqRadius = this.radius * this.radius;
-                const sqDistance = Vector3.distanceSquared(point, this.center);
+                const sqRadius = this.#radius ** 2;
+                const sqDistance = Vector3.distanceSquared(point, this.#center);
 
                 if (sqDistance > sqRadius) return ContainmentType.disjoint;
                 else if (sqDistance < sqRadius) return ContainmentType.contains;
@@ -245,7 +247,7 @@ export default class BoundingSphere {
 
     equals(...params) {
         BoundingSphere.prototype.equals = overload([BoundingSphere], function (other) {
-            return this.center.equals(other.center) && this.radius === other.radius;
+            return this.#center.equals(other.#center) && this.#radius === other.#radius;
         }).any(() => false);
 
         return BoundingSphere.prototype.equals.apply(this, params);
@@ -260,16 +262,16 @@ export default class BoundingSphere {
                 return frustum.intersects(this);
             })
             .add([BoundingSphere], function (sphere) {
-                const sqDistance = Vector3.distanceSquared(sphere.center, this.center);
+                const sqDistance = Vector3.distanceSquared(sphere.#center, this.#center);
 
-                if (sqDistance > (sphere.radius + this.radius) * (sphere.radius + this.radius)) return false;
+                if (sqDistance > (sphere.#radius + this.#radius) ** 2) return false;
                 else return true;
             })
             .add([Plane], function (plane) {
-                let distance = Vector3.dot(plane.normal, this.center);
+                let distance = Vector3.dot(plane.normal, this.#center);
                 distance += plane.d;
-                if (distance > this.radius) return PlaneIntersectionType.front;
-                else if (distance < -this.radius) return PlaneIntersectionType.back;
+                if (distance > this.#radius) return PlaneIntersectionType.front;
+                else if (distance < -this.#radius) return PlaneIntersectionType.back;
                 else return PlaneIntersectionType.intersecting;
             })
             .add([Ray], function (ray) {
@@ -282,14 +284,17 @@ export default class BoundingSphere {
     transform(...params) {
         BoundingSphere.prototype.transform = overload([Matrix], function (matrix) {
             const sphere = new BoundingSphere();
-            sphere.center = Vector3.transform(this.center, matrix);
+            sphere.#center = Vector3.transform(this.#center, matrix);
 
-            const { m11, m12, m13, m21, m22, m23, m31, m32, m33 } = matrix;
+            const m11 = matrix.m11, m12 = matrix.m12, m13 = matrix.m13;
+            const m21 = matrix.m21, m22 = matrix.m22, m23 = matrix.m23;
+            const m31 = matrix.m31, m32 = matrix.m32, m33 = matrix.m33;
+
             const max1 = Math.max((m11 * m11) + (m12 * m12) + (m13 * m13),
                 (m21 * m21) + (m22 * m22) + (m23 * m23));
             const max2 = Math.max(max1, (m31 * m31) + (m32 * m32) + (m33 * m33));
 
-            sphere.radius = this.radius * Math.sqrt(max2);
+            sphere.#radius = this.#radius * Math.sqrt(max2);
 
             return sphere;
         });
@@ -307,8 +312,8 @@ export default class BoundingSphere {
 
     toJSON() {
         return {
-            center: this.center,
-            radius: this.radius
+            center: this.#center,
+            radius: this.#radius
         };
     }
 }

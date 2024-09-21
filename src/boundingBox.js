@@ -34,10 +34,12 @@ export default class BoundingBox {
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         BoundingBox[CONSTURCTOR_SYMBOL] = overload()
             .add([], function () {
-                [this.min, this.max] = [Vector3.zero, Vector3.zero];
+                this.#min = Vector3.zero;
+                this.#max = Vector3.zero;
             })
             .add([Vector3, Vector3], function (min, max) {
-                [this.min, this.max] = [min, max];
+                this.min = min;
+                this.max = max;
             });
 
         return BoundingBox[CONSTURCTOR_SYMBOL].apply(this, params);
@@ -59,15 +61,14 @@ export default class BoundingBox {
     }
 
     *[Symbol.iterator]() {
-        yield this.min;
-        yield this.max;
+        yield this.#min;
+        yield this.#max;
     }
 
     static createFromPoints(...params) {
         BoundingBox.createFromPoints = overload([List.T(Vector3)], function (points) {
             let empty = true;
-            const minVec = BoundingBox.#maxVector3;
-            const maxVec = BoundingBox.#minVector3;
+            const minVec = BoundingBox.#maxVector3, maxVec = BoundingBox.#minVector3;
             for (let i = 0; i < points.length; i++) {
                 const { x: px, y: py, z: pz } = points[i];
                 minVec.x = (minVec.x < px) ? minVec.x : px;
@@ -105,8 +106,8 @@ export default class BoundingBox {
 
     static createMerged(...params) {
         BoundingBox.createMerged = overload([BoundingBox, BoundingBox], function (original, additional) {
-            const [oMin, oMax] = [original.min, original.max];
-            const [aMin, aMax] = [additional.min, additional.max];
+            const oMin = original.#min, oMax = original.#max;
+            const aMin = additional.#min, aMax = additional.#max;
 
             const vec3Min = new Vector3(
                 Math.min(oMin.x, aMin.x),
@@ -137,8 +138,9 @@ export default class BoundingBox {
     contains(...params) {
         BoundingBox.prototype.contains = overload()
             .add([BoundingBox], function (box) {
-                const [bMin, bMax] = [box.min, box.max];
-                const [min, max] = [this.min, this.max];
+                const bMin = box.#min, bMax = box.#max;
+                const min = this.#min, max = this.#max;
+
                 if (bMax.x < min.x ||
                     bMin.x > max.x ||
                     bMax.y < min.y ||
@@ -187,9 +189,10 @@ export default class BoundingBox {
             })
             .add([BoundingSphere], function (sphere) {
                 const r = sphere.radius;
-                const { x: cx, y: cy, z: cz } = sphere.center;
-                const { x: minx, y: miny, z: minz } = this.min;
-                const { x: maxx, y: maxy, z: maxz } = this.max;
+                const sphereCenter = sphere.center;
+                const cx = sphereCenter.x, cy = sphereCenter.y, cz = sphereCenter.z;
+                const minx = this.#min.x, miny = this.#min.y, minz = this.#min.z;
+                const maxx = this.#max.x, maxy = this.#max.y, maxz = this.#max.z;
 
                 if (cx - minx >= r && cy - miny >= r && cz - minz >= r &&
                     maxx - cx >= r && maxy - cy >= r && maxz - cz >= r) {
@@ -222,9 +225,9 @@ export default class BoundingBox {
                 return ContainmentType.disjoint;
             })
             .add([Vector3], function (point) {
-                const { x: px, y: py, z: pz } = point;
-                const { x: minx, y: miny, z: minz } = this.min;
-                const { x: maxx, y: maxy, z: maxz } = this.max;
+                const px = point.x, py = point.y, pz = point.z;
+                const minx = this.#min.x, miny = this.#min.y, minz = this.#min.z;
+                const maxx = this.#max.x, maxy = this.#max.y, maxz = this.#max.z;
 
                 if (px < minx ||
                     px > maxx ||
@@ -252,7 +255,7 @@ export default class BoundingBox {
 
     equals(...params) {
         BoundingBox.prototype.equals = overload([BoundingBox], function (box) {
-            return this.min.equals(box.min) && this.max.equals(box.max);
+            return this.#min.equals(box.#min) && this.#max.equals(box.#max);
         }).any(() => false);
 
         return BoundingBox.prototype.equals.apply(this, params);
@@ -261,8 +264,8 @@ export default class BoundingBox {
     getCorners(...params) {
         BoundingBox.prototype.getCorners = overload()
             .add([], function () {
-                const { x: minx, y: miny, z: minz } = this.min;
-                const { x: maxx, y: maxy, z: maxz } = this.max;
+                const minx = this.#min.x, miny = this.#min.y, minz = this.#min.z;
+                const maxx = this.#max.x, maxy = this.#max.y, maxz = this.#max.z;
                 return new List(Vector3, [
                     new Vector3(minx, maxy, maxz),
                     new Vector3(maxx, maxy, maxz),
@@ -279,8 +282,8 @@ export default class BoundingBox {
                     throw new RangeError("List must have at least 8 elements.");
                 }
 
-                const { x: minx, y: miny, z: minz } = this.min;
-                const { x: maxx, y: maxy, z: maxz } = this.max;
+                const minx = this.#min.x, miny = this.#min.y, minz = this.#min.z;
+                const maxx = this.#max.x, maxy = this.#max.y, maxz = this.#max.z;
 
                 const offsets = [
                     { x: minx, y: maxy, z: maxz },
@@ -306,10 +309,10 @@ export default class BoundingBox {
     intersects(...params) {
         BoundingBox.prototype.intersects = overload()
             .add([BoundingBox], function (box) {
-                const { x: minx, y: miny, z: minz } = this.min;
-                const { x: maxx, y: maxy, z: maxz } = this.max;
-                const { x: bMinx, y: bMiny, z: bMinz } = box.min;
-                const { x: bMaxx, y: bMaxy, z: bMaxz } = box.max;
+                const minx = this.#min.x, miny = this.#min.y, minz = this.#min.z;
+                const maxx = this.#max.x, maxy = this.#max.y, maxz = this.#max.z;
+                const bMinx = box.min.x, bMiny = box.min.y, bMinz = box.min.z;
+                const bMaxx = box.max.x, bMaxy = box.max.y, bMaxz = box.max.z;
                 if ((maxx >= bMinx) && (minx <= bMaxx)) {
                     if ((maxy < bMiny) || (miny > bMaxy)) return false;
                     return (maxz >= bMinz) && (minz <= bMaxz);
@@ -326,11 +329,12 @@ export default class BoundingBox {
                 const positiveVertex = new Vector3();
                 const negativeVertex = new Vector3();
 
-                const { x: px, y: py, z: pz } = plane.normal;
+                const planeNormal = plane.normal;
+                const px = planeNormal.x, py = planeNormal.y, pz = planeNormal.z;
                 const pd = plane.d;
 
-                const { x: minx, y: miny, z: minz } = this.min;
-                const { x: maxx, y: maxy, z: maxz } = this.max;
+                const minx = this.#min.x, miny = this.#min.y, minz = this.#min.z;
+                const maxx = this.#max.x, maxy = this.#max.y, maxz = this.#max.z;
 
                 const setVertexCoordinates = (planeNormalComponent, minComponent, maxComponent, positiveVertex, negativeVertex, axis) => {
                     if (planeNormalComponent >= 0) {
@@ -371,8 +375,8 @@ export default class BoundingBox {
 
     toJSON() {
         return {
-            min: this.min,
-            max: this.max
+            min: this.#min,
+            max: this.#max
         };
     }
 }

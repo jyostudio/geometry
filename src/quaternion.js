@@ -23,14 +23,18 @@ export default class Quaternion {
 
     static [CONSTURCTOR_SYMBOL] = function (...params) {
         Quaternion[CONSTURCTOR_SYMBOL] = overload()
-            .add([], function () {
-                [this.x, this.y, this.z, this.w] = [0, 0, 0, 0];
-            })
+            .add([], function () { })
             .add([Number, Number, Number, Number], function (x, y, z, w) {
-                [this.x, this.y, this.z, this.w] = [x, y, z, w];
+                this.#x = x;
+                this.#y = y;
+                this.#z = z;
+                this.#w = w;
             })
             .add([Vector3, Number], function (vectorPart, scalarPart) {
-                [this.x, this.y, this.z, this.w] = [vectorPart.x, vectorPart.y, vectorPart.z, scalarPart];
+                this.#x = vectorPart.x;
+                this.#y = vectorPart.y;
+                this.#z = vectorPart.z;
+                this.#w = scalarPart;
             });
 
         return Quaternion[CONSTURCTOR_SYMBOL].apply(this, params);
@@ -60,19 +64,19 @@ export default class Quaternion {
     }
 
     *[Symbol.iterator]() {
-        yield this.x;
-        yield this.y;
-        yield this.z;
-        yield this.w;
+        yield this.#x;
+        yield this.#y;
+        yield this.#z;
+        yield this.#w;
     }
 
     static add(...params) {
         Quaternion.add = overload([Quaternion, Quaternion], function (quaternion1, quaternion2) {
             return new Quaternion(
-                quaternion1.x + quaternion2.x,
-                quaternion1.y + quaternion2.y,
-                quaternion1.z + quaternion2.z,
-                quaternion1.w + quaternion2.w
+                quaternion1.#x + quaternion2.#x,
+                quaternion1.#y + quaternion2.#y,
+                quaternion1.#z + quaternion2.#z,
+                quaternion1.#w + quaternion2.#w
             );
         });
 
@@ -81,8 +85,8 @@ export default class Quaternion {
 
     static concatenate(...params) {
         Quaternion.concatenate = overload([Quaternion, Quaternion], function (value1, value2) {
-            const { x: x1, y: y1, z: z1, w: w1 } = value1;
-            const { x: x2, y: y2, z: z2, w: w2 } = value2;
+            const x1 = value1.#x, y1 = value1.#y, z1 = value1.#z, w1 = value1.#w;
+            const x2 = value2.#x, y2 = value2.#y, z2 = value2.#z, w2 = value2.#w;
 
             return new Quaternion(
                 ((x2 * w1) + (x1 * w2)) + ((y2 * z1) - (z2 * y1)),
@@ -97,7 +101,7 @@ export default class Quaternion {
 
     static conjugate(...params) {
         Quaternion.conjugate = overload([Quaternion], function (value) {
-            return new Quaternion(-value.x, -value.y, -value.z, value.w);
+            return new Quaternion(-value.#x, -value.#y, -value.#z, value.#w);
         });
 
         return Quaternion.conjugate.apply(this, params);
@@ -105,7 +109,7 @@ export default class Quaternion {
 
     static createFromAxisAngle(...params) {
         Quaternion.createFromAxisAngle = overload([Vector3, Number], function (axis, angle) {
-            const { x, y, z } = axis;
+            const x = axis.x, y = axis.y, z = axis.z;
             const half = angle * 0.5;
             const sin = Math.sin(half);
             const cos = Math.cos(half);
@@ -126,9 +130,9 @@ export default class Quaternion {
                 quaternion.w = sqrt * 0.5;
                 sqrt = 0.5 / sqrt;
 
-                quaternion.x = (matrix.m23 - matrix.m32) * sqrt;
-                quaternion.y = (matrix.m31 - matrix.m13) * sqrt;
-                quaternion.z = (matrix.m12 - matrix.m21) * sqrt;
+                quaternion.#x = (matrix.m23 - matrix.m32) * sqrt;
+                quaternion.#y = (matrix.m31 - matrix.m13) * sqrt;
+                quaternion.#z = (matrix.m12 - matrix.m21) * sqrt;
 
                 return quaternion;
             }
@@ -137,10 +141,10 @@ export default class Quaternion {
                 sqrt = Math.sqrt(1.0 + matrix.m11 - matrix.m22 - matrix.m33);
                 half = 0.5 / sqrt;
 
-                quaternion.x = 0.5 * sqrt;
-                quaternion.y = (matrix.m12 + matrix.m21) * half;
-                quaternion.z = (matrix.m13 + matrix.m31) * half;
-                quaternion.w = (matrix.m23 - matrix.m32) * half;
+                quaternion.#x = 0.5 * sqrt;
+                quaternion.#y = (matrix.m12 + matrix.m21) * half;
+                quaternion.#z = (matrix.m13 + matrix.m31) * half;
+                quaternion.#w = (matrix.m23 - matrix.m32) * half;
 
                 return quaternion;
             }
@@ -149,10 +153,10 @@ export default class Quaternion {
                 sqrt = Math.sqrt(1.0 + matrix.m22 - matrix.m11 - matrix.m33);
                 half = 0.5 / sqrt;
 
-                quaternion.x = (matrix.m21 + matrix.m12) * half;
-                quaternion.y = 0.5 * sqrt;
-                quaternion.z = (matrix.m32 + matrix.m23) * half;
-                quaternion.w = (matrix.m31 - matrix.m13) * half;
+                quaternion.#x = (matrix.m21 + matrix.m12) * half;
+                quaternion.#y = 0.5 * sqrt;
+                quaternion.#z = (matrix.m32 + matrix.m23) * half;
+                quaternion.#w = (matrix.m31 - matrix.m13) * half;
 
                 return quaternion;
             }
@@ -160,10 +164,10 @@ export default class Quaternion {
             sqrt = Math.sqrt(1.0 + matrix.m33 - matrix.m11 - matrix.m22);
             half = 0.5 / sqrt;
 
-            quaternion.x = (matrix.m31 + matrix.m13) * half;
-            quaternion.y = (matrix.m32 + matrix.m23) * half;
-            quaternion.z = 0.5 * sqrt;
-            quaternion.w = (matrix.m12 - matrix.m21) * half;
+            quaternion.#x = (matrix.m31 + matrix.m13) * half;
+            quaternion.#y = (matrix.m32 + matrix.m23) * half;
+            quaternion.#z = 0.5 * sqrt;
+            quaternion.#w = (matrix.m12 - matrix.m21) * half;
 
             return quaternion;
         });
@@ -177,9 +181,14 @@ export default class Quaternion {
             const halfPitch = pitch * 0.5;
             const halfYaw = yaw * 0.5;
 
-            const [sinRoll, cosRoll] = [Math.sin(halfRoll), Math.cos(halfRoll)];
-            const [sinPitch, cosPitch] = [Math.sin(halfPitch), Math.cos(halfPitch)];
-            const [sinYaw, cosYaw] = [Math.sin(halfYaw), Math.cos(halfYaw)];
+            const sinRoll = Math.sin(halfRoll);
+            const cosRoll = Math.cos(halfRoll);
+
+            const sinPitch = Math.sin(halfPitch);
+            const cosPitch = Math.cos(halfPitch);
+
+            const sinYaw = Math.sin(halfYaw);
+            const cosYaw = Math.cos(halfYaw);
 
             return new Quaternion(
                 (cosYaw * sinPitch * cosRoll) + (sinYaw * cosPitch * sinRoll),
@@ -194,8 +203,9 @@ export default class Quaternion {
 
     static divide(...params) {
         Quaternion.divide = overload([Quaternion, Quaternion], function (quaternion1, quaternion2) {
-            const { x: q1x, y: q1y, z: q1z, w: q1w } = quaternion1;
-            const { x: q2x, y: q2y, z: q2z, w: q2w } = quaternion2;
+            const q1x = quaternion1.#x, q1y = quaternion1.#y, q1z = quaternion1.#z, q1w = quaternion1.#w;
+            const q2x = quaternion2.#x, q2y = quaternion2.#y, q2z = quaternion2.#z, q2w = quaternion2.#w;
+
             const quaternion = new Quaternion();
 
             const q2MagnitudeSquared = quaternion2.lengthSquared();
@@ -211,10 +221,10 @@ export default class Quaternion {
             const crossProductXy = (q1x * inverseQ2y) - (q1y * inverseQ2x);
             const dotProduct = (q1x * inverseQ2x) + (q1y * inverseQ2y) + (q1z * inverseQ2z);
 
-            quaternion.x = (q1x * inverseQ2w) + (inverseQ2x * q1w) + crossProductYz;
-            quaternion.y = (q1y * inverseQ2w) + (inverseQ2y * q1w) + crossProductZx;
-            quaternion.z = (q1z * inverseQ2w) + (inverseQ2z * q1w) + crossProductXy;
-            quaternion.w = (q1w * inverseQ2w) - dotProduct;
+            quaternion.#x = (q1x * inverseQ2w) + (inverseQ2x * q1w) + crossProductYz;
+            quaternion.#y = (q1y * inverseQ2w) + (inverseQ2y * q1w) + crossProductZx;
+            quaternion.#z = (q1z * inverseQ2w) + (inverseQ2z * q1w) + crossProductXy;
+            quaternion.#w = (q1w * inverseQ2w) - dotProduct;
 
             return quaternion;
         });
@@ -224,8 +234,8 @@ export default class Quaternion {
 
     static dot(...params) {
         Quaternion.dot = overload([Quaternion, Quaternion], function (quaternion1, quaternion2) {
-            const { x: x1, y: y1, z: z1, w: w1 } = quaternion1;
-            const { x: x2, y: y2, z: z2, w: w2 } = quaternion2;
+            const x1 = quaternion1.#x, y1 = quaternion1.#y, z1 = quaternion1.#z, w1 = quaternion1.#w;
+            const x2 = quaternion2.#x, y2 = quaternion2.#y, z2 = quaternion2.#z, w2 = quaternion2.#w;
             return (x1 * x2) + (y1 * y2) + (z1 * z2) + (w1 * w2);
         });
 
@@ -234,12 +244,8 @@ export default class Quaternion {
 
     static inverse(...params) {
         Quaternion.inverse = overload([Quaternion], function (quaternion) {
-            const { x, y, z, w } = quaternion;
-            const x2 = x * x;
-            const y2 = y * y;
-            const z2 = z * z;
-            const w2 = w * w;
-
+            const x = quaternion.#x, y = quaternion.#y, z = quaternion.#z, w = quaternion.#w;
+            const x2 = x * x, y2 = y * y, z2 = z * z, w2 = w * w;
             const num = 1 / (x2 + y2 + z2 + w2);
 
             return new Quaternion(
@@ -255,8 +261,8 @@ export default class Quaternion {
 
     static lerp(...params) {
         Quaternion.lerp = overload([Quaternion, Quaternion, Number], function (quaternion1, quaternion2, amount) {
-            const { x: x1, y: y1, z: z1, w: w1 } = quaternion1;
-            const { x: x2, y: y2, z: z2, w: w2 } = quaternion2;
+            const x1 = quaternion1.#x, y1 = quaternion1.#y, z1 = quaternion1.#z, w1 = quaternion1.#w;
+            const x2 = quaternion2.#x, y2 = quaternion2.#y, z2 = quaternion2.#z, w2 = quaternion2.#w;
 
             const weight = 1 - amount;
             const sign = this.dot(quaternion1, quaternion2) >= 0 ? 1 : -1;
@@ -282,15 +288,15 @@ export default class Quaternion {
         Quaternion.multiply = overload()
             .add([Quaternion, Number], function (quaternion1, scaleFactor) {
                 return new Quaternion(
-                    quaternion1.x * scaleFactor,
-                    quaternion1.y * scaleFactor,
-                    quaternion1.z * scaleFactor,
-                    quaternion1.w * scaleFactor
+                    quaternion1.#x * scaleFactor,
+                    quaternion1.#y * scaleFactor,
+                    quaternion1.#z * scaleFactor,
+                    quaternion1.#w * scaleFactor
                 );
             })
             .add([Quaternion, Quaternion], function (quaternion1, quaternion2) {
-                const { x: x1, y: y1, z: z1, w: w1 } = quaternion1;
-                const { x: x2, y: y2, z: z2, w: w2 } = quaternion2;
+                const x1 = quaternion1.#x, y1 = quaternion1.#y, z1 = quaternion1.#z, w1 = quaternion1.#w;
+                const x2 = quaternion2.#x, y2 = quaternion2.#y, z2 = quaternion2.#z, w2 = quaternion2.#w;
 
                 const yz = (y1 * z2) - (z1 * y2);
                 const zx = (z1 * x2) - (x1 * z2);
@@ -310,8 +316,7 @@ export default class Quaternion {
 
     static negate(...params) {
         Quaternion.negate = overload([Quaternion], function (quaternion) {
-            const { x, y, z, w } = quaternion;
-            return new Quaternion(-x, -y, -z, -w);
+            return new Quaternion(-quaternion.#x, -quaternion.#y, -quaternion.#z, -quaternion.#w);
         });
 
         return Quaternion.negate.apply(this, params);
@@ -319,14 +324,13 @@ export default class Quaternion {
 
     static normalize(...params) {
         Quaternion.normalize = overload([Quaternion], function (quaternion) {
-            const { x, y, z, w } = quaternion;
-            const factor = 1 / quaternion.length();
+            const factor = 1 / Math.sqrt(quaternion.#x ** 2 + quaternion.#y ** 2 + quaternion.#z ** 2 + quaternion.#w ** 2);
 
             return new Quaternion(
-                x * factor,
-                y * factor,
-                z * factor,
-                w * factor
+                quaternion.#x * factor,
+                quaternion.#y * factor,
+                quaternion.#z * factor,
+                quaternion.#w * factor
             );
         });
 
@@ -335,8 +339,8 @@ export default class Quaternion {
 
     static slerp(...params) {
         Quaternion.slerp = overload([Quaternion, Quaternion, Number], function (quaternion1, quaternion2, amount) {
-            const { x: x1, y: y1, z: z1, w: w1 } = quaternion1;
-            const { x: x2, y: y2, z: z2, w: w2 } = quaternion2;
+            const x1 = quaternion1.#x, y1 = quaternion1.#y, z1 = quaternion1.#z, w1 = quaternion1.#w;
+            const x2 = quaternion2.#x, y2 = quaternion2.#y, z2 = quaternion2.#z, w2 = quaternion2.#w;
 
             let dotProduct = this.dot(quaternion1, quaternion2);
             const isNegative = dotProduct < 0;
@@ -370,10 +374,10 @@ export default class Quaternion {
     static subtract(...params) {
         Quaternion.subtract = overload([Quaternion, Quaternion], function (quaternion1, quaternion2) {
             return new Quaternion(
-                quaternion1.x - quaternion2.x,
-                quaternion1.y - quaternion2.y,
-                quaternion1.z - quaternion2.z,
-                quaternion1.w - quaternion2.w
+                quaternion1.#x - quaternion2.#x,
+                quaternion1.#y - quaternion2.#y,
+                quaternion1.#z - quaternion2.#z,
+                quaternion1.#w - quaternion2.#w
             );
         });
 
@@ -410,7 +414,9 @@ export default class Quaternion {
 
     conjugate(...params) {
         Quaternion.prototype.conjugate = overload([], function () {
-            [this.x, this.y, this.z] = [-this.x, -this.y, -this.z];
+            this.#x = -this.#x;
+            this.#y = -this.#y;
+            this.#z = -this.#z;
         });
 
         return Quaternion.prototype.conjugate.apply(this, params);
@@ -418,7 +424,7 @@ export default class Quaternion {
 
     length(...params) {
         Quaternion.prototype.length = overload([], function () {
-            return Math.sqrt(this.lengthSquared());
+            return Math.sqrt(this.#x ** 2 + this.#y ** 2 + this.#z ** 2 + this.#w ** 2);
         });
 
         return Quaternion.prototype.length.apply(this, params);
@@ -426,8 +432,7 @@ export default class Quaternion {
 
     lengthSquared(...params) {
         Quaternion.prototype.lengthSquared = overload([], function () {
-            const { x, y, z, w } = this;
-            return (x * x) + (y * y) + (z * z) + (w * w);
+            return this.#x ** 2 + this.#y ** 2 + this.#z ** 2 + this.#w ** 2;
         });
 
         return Quaternion.prototype.lengthSquared.apply(this, params);
@@ -435,11 +440,11 @@ export default class Quaternion {
 
     normalize(...params) {
         Quaternion.prototype.normalize = overload([], function () {
-            const num = 1 / this.length();
-            this.x *= num;
-            this.y *= num;
-            this.z *= num;
-            this.w *= num;
+            const num = 1 / Math.sqrt(this.#x ** 2 + this.#y ** 2 + this.#z ** 2 + this.#w ** 2);
+            this.#x *= num;
+            this.#y *= num;
+            this.#z *= num;
+            this.#w *= num;
         });
 
         return Quaternion.prototype.normalize.apply(this, params);
@@ -447,7 +452,7 @@ export default class Quaternion {
 
     equals(...params) {
         Quaternion.prototype.equals = overload([Quaternion], function (other) {
-            return this.x === other.x && this.y === other.y && this.z === other.z && this.w === other.w;
+            return this.#x === other.#x && this.#y === other.#y && this.#z === other.#z && this.w === other.#w;
         }).any(() => false);
 
         return Quaternion.prototype.equals.apply(this, params);
@@ -463,10 +468,10 @@ export default class Quaternion {
 
     toJSON() {
         return {
-            x: this.x,
-            y: this.y,
-            z: this.z,
-            w: this.w
+            x: this.#x,
+            y: this.#y,
+            z: this.#z,
+            w: this.#w
         };
     }
 }
