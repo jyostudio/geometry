@@ -1,18 +1,19 @@
 {
   "name": "@jyostudio/geometry",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "geometry",
   "source": "src/index.js",
   "main": "src/index.js",
-  "unpkg": "dist/geometry.js",
-  "jsdelivr": "dist/geometry.js",
+  "unpkg": "dist/index.js",
+  "jsdelivr": "dist/index.js",
   "type": "module",
-  "types": "types/geometry.d.ts",
-  "typings": "types/geometry.d.ts",
+  "types": "src/index.d.ts",
+  "typings": "src/index.d.ts",
   "scripts": {
     "publish": "npm publish --access public",
-    "build": "esbuild src/index.js --bundle --minify --sourcemap --format=esm --outfile=dist/geometry.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --coverage"
+    "build": "esbuild src/index.js --bundle --minify --sourcemap --format=esm --outfile=dist/index.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --coverage",
+    "doc": "typedoc --options typedoc.json"
   },
   "repository": {
     "type": "git",
@@ -28,14 +29,16 @@
   },
   "homepage": "https://github.com/jyostudio/geometry#readme",
   "devDependencies": {
-    "esbuild": "^0.23.0",
+    "esbuild": "^0.23.1",
+    "typedoc": "^0.26.11",
+    "typedoc-github-theme": "^0.1.2",
     "jest": "^29.7.0",
     "jest-html-reporter": "^3.10.2"
   },
-  "peerDependencies": {
-    "@jyostudio/enum": "^0.0.3",
-    "@jyostudio/list": "^0.0.8",
-    "@jyostudio/overload": "^0.0.12"
+  "dependencies": {
+    "@jyostudio/enum": "^0.1.0",
+    "@jyostudio/list": "^0.1.0",
+    "@jyostudio/overload": "^0.1.1"
   },
   "jest": {
     "transform": {},
