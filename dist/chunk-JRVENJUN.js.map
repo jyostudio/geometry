@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/containment-type.ts"],
+  "sourcesContent": ["import Enum from \"@jyostudio/enum\";\r\n\r\n/**\r\n * \u6307\u793A\u8FB9\u754C\u4F53\u76F8\u4E92\u63D2\u5165\u6216\u5305\u542B\u7684\u7A0B\u5EA6\u3002\r\n * @enum\r\n */\r\nexport default class ContainmentType extends Enum {\r\n    /**\r\n     * \u6307\u793A\u8FB9\u754C\u4F53\u4E0D\u76F8\u4E92\u91CD\u53E0\u3002\r\n     */\r\n    declare static readonly disjoint: ContainmentType;\r\n\r\n    /**\r\n     * \u6307\u793A\u4E00\u4E2A\u8FB9\u754C\u4F53\u5B8C\u5168\u5305\u542B\u53E6\u4E00\u4E2A\u8FB9\u754C\u4F53\u3002\r\n     */\r\n    declare static readonly contains: ContainmentType;\r\n\r\n    /**\r\n     * \u6307\u793A\u8FB9\u754C\u4F53\u90E8\u5206\u91CD\u53E0\u3002\r\n     */\r\n    declare static readonly intersects: ContainmentType;\r\n\r\n    static {\r\n        this.set({\r\n            disjoint: 0,\r\n            contains: 1,\r\n            intersects: 2\r\n        });\r\n    }\r\n}\r\n"],
+  "mappings": "wCAMA,IAAqBA,EAArB,MAAqBA,UAAwBC,CAAK,CAuBlD,EANQD,EAAK,IAAI,CACL,SAAU,EACV,SAAU,EACV,WAAY,CAChB,CAAC,EArBT,IAAqBE,EAArBF",
+  "names": ["_ContainmentType", "Enum", "ContainmentType"]
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/plane-intersection-type.ts"],
+  "sourcesContent": ["import Enum from \"@jyostudio/enum\";\r\n\r\n/**\r\n * \u4ECB\u7ECD\u5E73\u9762\u548C\u8FB9\u754C\u4F53\u95F4\u7684\u4EA4\u96C6\u3002\r\n * @enum\r\n */\r\nexport default class PlaneIntersectionType extends Enum {\r\n    /**\r\n     * \u65E0\u4EA4\u96C6\uFF0C\u8FB9\u754C\u4F53\u4F4D\u4E8E Plane \u7684\u6B63\u534A\u7A7A\u95F4\u3002\r\n     */\r\n    declare static readonly front: PlaneIntersectionType;\r\n\r\n    /**\r\n     * \u65E0\u4EA4\u96C6\uFF0C\u8FB9\u754C\u4F53\u4F4D\u4E8E Plane \u7684\u8D1F\u534A\u7A7A\u95F4\u3002\r\n     */\r\n    declare static readonly back: PlaneIntersectionType;\r\n\r\n    /**\r\n     * \u4E0E Plane \u76F8\u4EA4\u3002\r\n     */\r\n    declare static readonly intersecting: PlaneIntersectionType;\r\n\r\n    static {\r\n        this.set({\r\n            front: 0,\r\n            back: 1,\r\n            intersecting: 2\r\n        })\r\n    }\r\n}\r\n"],
+  "mappings": "mCAMA,IAAqBA,EAArB,MAAqBA,UAA8BC,CAAK,CAuBxD,EANQD,EAAK,IAAI,CACL,MAAO,EACP,KAAM,EACN,aAAc,CAClB,CAAC,EArBT,IAAqBE,EAArBF",
+  "names": ["_PlaneIntersectionType", "Enum", "PlaneIntersectionType"]
+}

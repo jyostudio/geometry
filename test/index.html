@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometry Tests</title>
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+</head>
+
+<body>
+    <div id="mocha"></div>
+    <script src="https://unpkg.com/chai@4.5.0/chai.js"></script>
+    <script src="https://unpkg.com/mocha/mocha.js"></script>
+
+    <script>
+        mocha.setup('bdd');
+        // Expose chai globals
+        window.expect = chai.expect;
+        window.assert = chai.assert;
+    </script>
+    <script src="bundle.js"></script>
+    
+    <div id="error-container" style="display:none; margin-top: 20px; padding: 10px; background: #fff0f0; border: 1px solid #ffcccc;">
+        <h3>Test Failures (Copy for Analysis)</h3>
+        <textarea id="error-output" style="width: 100%; height: 300px; font-family: monospace;"></textarea>
+    </div>
+
+    <script>
+        mocha.checkLeaks();
+        var runner = mocha.run();
+
+        var errorOutput = [];
+
+        runner.on('fail', function(test, err) {
+            var message = "Test: " + test.fullTitle() + "\n" +
+                          "Error: " + err.message + "\n" +
+                          "Stack: " + (err.stack || "No stack trace") + "\n" +
+                          "--------------------------------------------------\n";
+            errorOutput.push(message);
+
+            var container = document.getElementById('error-container');
+            var textarea = document.getElementById('error-output');
+
+            container.style.display = 'block';
+            textarea.value = errorOutput.join('\n');
+        });
+    </script>
+</body>
+
+</html>

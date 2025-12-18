@@ -1,18 +1,22 @@
 {
   "name": "@jyostudio/geometry",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "geometry",
-  "source": "src/index.js",
+  "source": "src/index.ts",
   "main": "dist/index.js",
   "unpkg": "dist/index.js",
   "jsdelivr": "dist/index.js",
   "type": "module",
-  "types": "src/index.d.ts",
-  "typings": "src/index.d.ts",
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "publish": "npm publish --access public",
-    "build": "esbuild src/index.js --bundle --minify --sourcemap --format=esm --outfile=dist/index.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --coverage",
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && npm run build:types && npm run build:js",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "node scripts/build.js",
+    "build:benchmark": "node scripts/build-benchmark.js",
+    "test": "node scripts/build-test.js",
     "doc": "typedoc --options typedoc.json"
   },
   "repository": {
@@ -28,20 +32,21 @@
     "url": "https://github.com/jyostudio/geometry/issues"
   },
   "homepage": "https://github.com/jyostudio/geometry#readme",
+  "engines": {
+    "node": "^23"
+  },
   "devDependencies": {
-    "esbuild": "^0.23.1",
-    "typedoc": "^0.26.11",
-    "typedoc-github-theme": "^0.1.2",
-    "jest": "^29.7.0",
-    "jest-html-reporter": "^3.10.2"
-  },
-  "dependencies": {
-    "@jyostudio/enum": "^0.1.3",
-    "@jyostudio/list": "^0.1.3",
-    "@jyostudio/overload": "^0.1.3"
-  },
-  "jest": {
-    "transform": {},
-    "testResultsProcessor": "./node_modules/jest-html-reporter"
+    "@jyostudio/enum": "^0.1.4",
+    "@jyostudio/list": "^0.1.13",
+    "@jyostudio/overload": "^0.1.13",
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^25.0.3",
+    "chai": "^6.2.1",
+    "esbuild": "^0.27.1",
+    "mocha": "^11.7.5",
+    "typedoc": "^0.28.15",
+    "typedoc-github-theme": "^0.3.1",
+    "typescript": "^5.9.3"
   }
 }

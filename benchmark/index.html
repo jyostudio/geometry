@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometry Library Benchmarks</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #controls { margin-bottom: 20px; }
+        #progress { margin-bottom: 20px; font-weight: bold; }
+        .chart-container { position: relative; height: 400px; width: 100%; margin-bottom: 50px; }
+        #outputLog { width: 100%; height: 200px; margin-top: 20px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>Geometry Library Benchmarks</h1>
+    <div id="controls">
+        <button id="runBtn" onclick="runBenchmarks()">Run Benchmarks</button>
+    </div>
+    <div id="progress"></div>
+    <div id="charts"></div>
+    <h3>Text Output</h3>
+    <textarea id="outputLog" readonly placeholder="Benchmark results will appear here..."></textarea>
+
+    <script src="bundle.js"></script>
+    <script>
+        async function runBenchmarks() {
+            if (typeof Chart === 'undefined') {
+                alert('Chart.js library not loaded. Please check your internet connection or the script URL.');
+                return;
+            }
+
+            const runBtn = document.getElementById('runBtn');
+            runBtn.disabled = true;
+            const progressDiv = document.getElementById('progress');
+            const chartsDiv = document.getElementById('charts');
+            const outputLog = document.getElementById('outputLog');
+            
+            chartsDiv.innerHTML = ''; // Clear previous charts
+            outputLog.value = ''; // Clear previous log
+
+            const suites = window.benchmarkSuites;
+            
+            for (const suite of suites) {
+                progressDiv.textContent = `Running suite: ${suite.name}...`;
+                outputLog.value += `\n--- Suite: ${suite.name} ---\n`;
+                
+                // Create canvas for this suite
+                const canvasContainer = document.createElement('div');
+                canvasContainer.className = 'chart-container';
+                const canvas = document.createElement('canvas');
+                canvasContainer.appendChild(canvas);
+                chartsDiv.appendChild(canvasContainer);
+
+                const results = await suite.run((res) => {
+                    const text = `${res.name}: ${Math.round(res.opsPerSecond).toLocaleString()} ops/sec`;
+                    progressDiv.textContent = `Running suite: ${suite.name} - ${text}`;
+                    outputLog.value += `${text}\n`;
+                    outputLog.scrollTop = outputLog.scrollHeight; // Auto-scroll
+                });
+
+                // Render Chart
+                new Chart(canvas, {
+                    type: 'bar',
+                    data: {
+                        labels: results.map(r => r.name),
+                        datasets: [{
+                            label: `${suite.name} Operations per Second`,
+                            data: results.map(r => r.opsPerSecond),
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Ops / Sec'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            progressDiv.textContent = 'All benchmarks completed.';
+            runBtn.disabled = false;
+        }
+    </script>
+</body>
+</html>
